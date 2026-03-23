@@ -99,4 +99,55 @@ const LayoutEngine = {
 
         return `<div class="tech-grid">${items}</div>`;
     },
+    // 📓 6. Single Product Focus (Нэг хуудсанд нэг бараа - Постер маягийн)
+    single: (data) => {
+        // Эхний 1 барааг л харуулна (Hero product)
+        const p = data[0] || {}; 
+        return `
+            <div class="single-focus-layout">
+                <div class="hero-image-section" onclick="triggerImgUpload(this)">
+                    <img src="https://via.placeholder.com/1000x1200?text=Hero+Product" alt="Hero">
+                </div>
+                <div class="hero-content">
+                    <div class="badge">LIMITED EDITION</div>
+                    <h1 contenteditable="true">${p.нэр || p.name || 'БҮТЭЭГДЭХҮҮНИЙ НЭР'}</h1>
+                    <p class="hero-desc" contenteditable="true">${p.тайлбар || p.desc || 'Энэ хэсэгт тухайн барааны хамгийн чухал давуу тал, түүхийг маш томоор бичнэ.'}</p>
+                    <div class="hero-price">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
+                    <div class="handmade-stamp">Сэтгэл гарган урлаж</div>
+                </div>
+            </div>
+        `;
+    },
+
+    // 📔 7. Mixed / Hybrid (Бүхний хослол - Загвар холимог)
+    hybrid: (data) => {
+        // Эхний бараа Lifestyle, дараагийнх нь Grid
+        const first = data[0] || {};
+        const others = data.slice(1, 5); // Дараагийн 4 бараа
+
+        const gridItems = others.map(p => `
+            <div class="mini-card">
+                <div class="mini-img" onclick="triggerImgUpload(this)">
+                    <img src="https://via.placeholder.com/300x300?text=Product">
+                </div>
+                <h4 contenteditable="true">${p.нэр || p.name || 'Бараа'}</h4>
+                <p>₮ ${p.үнэ || p.price || '0'}</p>
+            </div>
+        `).join('');
+
+        return `
+            <div class="hybrid-layout">
+                <div class="hybrid-top" onclick="triggerImgUpload(this)">
+                    <div class="overlay-text">
+                        <h2 contenteditable="true">ШИНЭ ЦУГЛУУЛГА</h2>
+                        <p contenteditable="true">2026 оны онцлох бүтээгдэхүүнүүд</p>
+                    </div>
+                    <img src="https://via.placeholder.com/1200x600?text=Feature+Lifestyle" alt="Main">
+                </div>
+                <div class="hybrid-bottom-grid">
+                    ${gridItems}
+                </div>
+            </div>
+        `;
+    },
 };
