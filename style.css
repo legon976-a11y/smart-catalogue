@@ -1,208 +1,127 @@
 :root {
-    --brand-color: #d19a66;
-    --text-dark: #1a1a1a;
-    --text-light: #7a7a7a;
-    --paper-bg: #ffffff;
-    --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
-}
-
-body { font-family: 'DM Sans', sans-serif; background-color: #f4f1ee; margin: 0; padding: 20px; color: var(--text-dark); }
-
-/* Admin UI */
-.admin-panel { max-width: 1200px; margin: 0 auto 30px; background: white; padding: 30px; border-radius: 20px; box-shadow: var(--shadow-soft); }
-.template-selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 25px 0; }
-
-.template-card { 
-    background: none; border: 1px solid #eee; border-radius: 12px; padding: 15px; 
-    display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s;
-}
-.template-card.active { border-color: var(--brand-color); background: rgba(209, 154, 102, 0.05); }
-
-/* --- Printing Standard (Safety Margin 2cm) --- */
-#catalog-canvas { 
-    /* ... бусад хэмжээ, padding-ийн тохиргоо ... */
-
-    /* 1. Эхлээд угтвар (Vendor prefix) */
-    -webkit-print-color-adjust: exact;
+    /* Color Palette - Soft & Elegant */
+    --primary-black: #1d1d1f;
+    --secondary-gray: #86868b;
+    --accent-gold: #d19a66;
+    --bg-light: #f5f5f7;
+    --white: #ffffff;
     
-    /* 2. Дараа нь Стандарт (Standard property) - Энэ нь хамгийн сүүлд байх ёстой */
+    /* Spacing Scale - 8px base */
+    --s-1: 8px;  --s-2: 16px; 
+    --s-3: 24px; --s-4: 32px; 
+    --s-8: 64px;
+    
+    /* Typography */
+    --font-main: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --f-h1: clamp(32px, 5vw, 48px);
+    --f-h3: 18px;
+    --f-body: 14px;
+    
+    /* Effects */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Base Print Setup (2cm Safety Margin) */
+#catalog-canvas {
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--white);
+    padding: 20mm; /* 2см Аюулгүй бүс */
+    box-sizing: border-box;
+    margin: 0 auto;
+    position: relative;
+    font-family: var(--font-main);
+    color: var(--primary-black);
+    -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-.catalog-header h1 { font-family: 'Playfair Display', serif; font-size: 48px; margin: 0; }
-
-/* 📘 1. Grid Style */
-.grid .product-grid { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 12mm; 
+/* Header Hierarchy */
+.catalog-header {
+    margin-bottom: var(--s-8);
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: var(--s-3);
 }
 
-/* 📗 2. Lifestyle Style */
-.lifestyle .product-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 15mm; 
+.catalog-header h1 {
+    font-size: var(--f-h1);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
 }
-.lifestyle .product-card.featured { grid-column: span 2; display: flex; gap: 20px; align-items: center; }
-.lifestyle .product-card.featured .img-container { height: 300px; flex: 1; }
 
-/* 📙 3. Premium Style */
-.premium #catalog-canvas { padding: 40mm 30mm; }
-.premium .product-grid { display: grid; grid-template-columns: 1fr; gap: 40mm; text-align: center; }
-.premium .img-container { height: 450px; background: none; }
+.catalog-header p {
+    color: var(--secondary-gray);
+    font-size: var(--f-body);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--s-1);
+}
 
-/* Common UI */
-.img-container { width: 100%; height: 200px; background: #f9f9f9; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.price-tag { color: var(--brand-color); font-weight: bold; font-size: 20px; margin-top: 10px; }
-.visually-hidden { display: none; }
-/* 📕 Editorial Style CSS */
-.editorial .editorial-grid {
+/* --- REUSABLE COMPONENTS --- */
+
+/* Product Grid System */
+.product-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Үндсэн 2 багана */
-    gap: 30mm 15mm;
+    gap: var(--s-4); /* 32px тогтмол зай */
+    width: 100%;
 }
 
-.editorial .product-card.wide-layout {
-    grid-column: span 2; /* 3 дахь бараа бүтэн өргөнөөрөө */
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    border-top: 1px solid #333;
-    padding-top: 30px;
-}
-
-.editorial .product-card.wide-layout .img-container {
-    flex: 1.5;
-    height: 400px;
-}
-
-.editorial .cat-tag {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--brand-color);
-    display: block;
-    margin-bottom: 10px;
-}
-
-/* 📒 Technical Style CSS */
-.technical .tech-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10mm;
-}
-
-.tech-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    background: #fff;
-}
-
-.tech-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--text-dark);
-    margin-bottom: 10px;
-    padding-bottom: 5px;
-}
-
-.tech-body { display: flex; gap: 15px; }
-.tech-img { flex: 1; height: 120px; background: #f0f0f0; }
-.specs { flex: 1.5; font-size: 11px; }
-
-.spec-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    border-bottom: 1px dotted #eee;
-}
-
-.spec-row.price {
-    margin-top: 10px;
-    font-weight: bold;
-    color: var(--brand-color);
-    border: none;
-    font-size: 13px;
-}
-/* 📓 6. Single Product Style CSS */
-.single .single-focus-layout {
+/* Premium Product Card */
+.product-card {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    justify-content: center;
+    background: var(--white);
+    transition: transform 0.3s ease;
 }
 
-.single .hero-image-section {
+/* Fixed Aspect Ratio for Images (1:1 Square) */
+.img-wrapper {
     width: 100%;
-    height: 180mm; /* Том постер зураг */
-    background: #f4f4f4;
-    margin-bottom: 20px;
-}
-
-.single .hero-content { text-align: center; }
-.single .hero-content h1 { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 56px; 
-    margin: 15px 0; 
-}
-
-.single .hero-desc { 
-    font-size: 16px; 
-    max-width: 80%; 
-    margin: 0 auto 25px; 
-    line-height: 1.6;
-    color: var(--text-light);
-}
-
-.single .hero-price { 
-    font-size: 32px; 
-    font-weight: bold; 
-    color: var(--brand-color); 
-}
-
-.single .handmade-stamp {
-    margin-top: 20px;
-    font-family: 'DM Sans', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 10px;
-    color: #999;
-}
-
-/* 📔 7. Hybrid Style CSS */
-.hybrid .hybrid-top {
-    position: relative;
-    width: 100%;
-    height: 120mm;
-    background: #eee;
-    margin-bottom: 30px;
+    aspect-ratio: 1 / 1;
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
     overflow: hidden;
+    margin-bottom: var(--s-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
-.hybrid .hybrid-top img { width: 100%; height: 100%; object-fit: cover; }
-
-.hybrid .overlay-text {
-    position: absolute;
-    bottom: 30px;
-    left: 30px;
-    color: white;
-    z-index: 2;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+.img-wrapper img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain; /* Зураг сунахгүй, хайрцагтаа багтана */
 }
 
-.hybrid .hybrid-bottom-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10mm;
+/* Typography Hierarchy */
+.product-info h3 {
+    font-size: var(--f-h3);
+    font-weight: 600;
+    margin: 0 0 var(--s-1) 0;
+    line-height: 1.2;
 }
 
-.hybrid .mini-card { text-align: center; font-size: 12px; }
-.hybrid .mini-img { height: 100px; background: #f9f9f9; margin-bottom: 10px; }
+.product-info .description {
+    font-size: 13px;
+    color: var(--secondary-gray);
+    line-height: 1.5;
+    margin-bottom: var(--s-2);
+}
 
-/* Edge Compatibility Fix */
-#catalog-canvas {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+.product-info .price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-black);
+}
+
+.product-info .meta {
+    font-size: 11px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 4px;
 }

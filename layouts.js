@@ -1,153 +1,42 @@
 const LayoutEngine = {
-    // 📘 1. Grid-based (Цэгцтэй 3 багана)
+    // 📘 3-Column Grid (Standard)
     grid: (data) => {
-        const items = data.map(p => `
-            <div class="product-card">
-                <div class="img-container" onclick="triggerImgUpload(this)">
-                    <img src="https://via.placeholder.com/400x400?text=Зураг+солих" alt="Product">
-                </div>
-                <div class="p-info">
-                    <h3 contenteditable="true">${p.нэр || p.name || 'Барааны нэр'}</h3>
-                    <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Тайлбар...'}</p>
-                    <div class="price-row">
-                        <div class="price-tag">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-        return `<div class="product-grid">${items}</div>`;
+        const items = data.map(p => createCard(p)).join('');
+        return `<div class="product-grid" style="grid-template-columns: repeat(3, 1fr);">${items}</div>`;
     },
 
-    // 📗 2. Lifestyle (Том зурагтай, Storytelling)
-    lifestyle: (data) => {
-        const items = data.map((p, idx) => `
-            <div class="product-card ${idx % 3 === 0 ? 'featured' : ''}">
-                <div class="img-container" onclick="triggerImgUpload(this)">
-                    <img src="https://via.placeholder.com/600x400?text=Lifestyle+Зураг" alt="Lifestyle">
-                </div>
-                <div class="p-info">
-                    <h3 contenteditable="true">${p.нэр || p.name || 'Бараа'}</h3>
-                    <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Энэ хэсэгт бүтээгдэхүүний хэрэглээг харуулсан текст байвал тохиромжтой.'}</p>
-                    <div class="price-tag">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
-                </div>
-            </div>
-        `).join('');
-        return `<div class="product-grid">${items}</div>`;
-    },
-
-    // 📙 3. Minimal / Premium (Luxury, Whitespace ихтэй)
-    premium: (data) => {
-        const items = data.map(p => `
-            <div class="product-card premium-focus">
-                <div class="img-container" onclick="triggerImgUpload(this)">
-                    <img src="https://via.placeholder.com/800x800?text=Premium+Product" alt="Premium">
-                </div>
-                <h3 contenteditable="true">${p.нэр || p.name || 'HERO PRODUCT'}</h3>
-                <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Минимал тайлбар...'}</p>
-                <div class="price-tag">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
-            </div>
-        `).join('');
-        return `<div class="product-grid">${items}</div>`;
-    },
-    // 📕 4. Editorial Style (Сэтгүүл маяг)
-    editorial: (data) => {
-        const items = data.map((p, idx) => {
-            // 3 дахь бараа бүрийг "Spread" буюу бүтэн мөр эзэлсэн том зурагтай болгоно
-            const isWide = (idx + 1) % 3 === 0;
-            return `
-                <div class="product-card ${isWide ? 'wide-layout' : 'standard-layout'}">
-                    <div class="img-container" onclick="triggerImgUpload(this)">
-                        <img src="https://via.placeholder.com/600x600?text=Editorial+Shot" alt="Editorial">
-                    </div>
-                    <div class="p-info">
-                        <span class="cat-tag">COLLECTION 2026</span>
-                        <h3 contenteditable="true">${p.нэр || p.name || 'БҮТЭЭГДЭХҮҮН'}</h3>
-                        <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Сэтгүүлийн нийтлэл шиг урт тайлбар энд байршихад тохиромжтой.'}</p>
-                        <div class="price-tag">₮ ${p.үнэ || p.price || '0'}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        return `
-            <div class="editorial-grid">
-                ${items}
-            </div>
-        `;
-    },
-    // 📒 5. Technical Style (Үзүүлэлт, Спецификаци)
-    technical: (data) => {
-        const items = data.map(p => `
-            <div class="tech-card">
-                <div class="tech-header">
-                    <h3 contenteditable="true">${p.нэр || p.name || 'MODEL-X'}</h3>
-                    <span class="sku">SKU: ${p.код || '0000'}</span>
-                </div>
-                <div class="tech-body">
-                    <div class="tech-img" onclick="triggerImgUpload(this)">
-                        <img src="https://via.placeholder.com/300x200?text=Technical+View">
-                    </div>
-                    <div class="specs">
-                        <div class="spec-row"><strong>Материал:</strong> <span contenteditable="true">${p.материал || '-'}</span></div>
-                        <div class="spec-row"><strong>Хэмжээ:</strong> <span contenteditable="true">${p.хэмжээ || '-'}</span></div>
-                        <div class="spec-row"><strong>Жин:</strong> <span contenteditable="true">${p.жин || '-'}</span></div>
-                        <div class="spec-row price"><strong>Үнэ:</strong> <span>₮ ${p.үнэ || '0'}</span></div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-
-        return `<div class="tech-grid">${items}</div>`;
-    },
-    // 📓 6. Single Product Focus (Нэг хуудсанд нэг бараа - Постер маягийн)
+    // 📓 Hero Layout (1-Column Feature)
     single: (data) => {
-        // Эхний 1 барааг л харуулна (Hero product)
-        const p = data[0] || {}; 
+        const p = data[0] || {};
         return `
-            <div class="single-focus-layout">
-                <div class="hero-image-section" onclick="triggerImgUpload(this)">
-                    <img src="https://via.placeholder.com/1000x1200?text=Hero+Product" alt="Hero">
+            <div class="hero-layout">
+                <div class="img-wrapper large" onclick="triggerImgUpload(this)" style="aspect-ratio: 16/9;">
+                    <img src="placeholder.jpg">
                 </div>
-                <div class="hero-content">
-                    <div class="badge">LIMITED EDITION</div>
-                    <h1 contenteditable="true">${p.нэр || p.name || 'БҮТЭЭГДЭХҮҮНИЙ НЭР'}</h1>
-                    <p class="hero-desc" contenteditable="true">${p.тайлбар || p.desc || 'Энэ хэсэгт тухайн барааны хамгийн чухал давуу тал, түүхийг маш томоор бичнэ.'}</p>
-                    <div class="hero-price">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
-                    <div class="handmade-stamp">Сэтгэл гарган урлаж</div>
+                <div class="hero-detail" style="text-align: center; padding: var(--s-4) 0;">
+                    <span class="meta">${p.Брэнд || 'FEATURED'}</span>
+                    <h1 style="font-size: 42px;">${p['Бүтээгдэхүүний нэр'] || ''}</h1>
+                    <p class="description" style="max-width: 500px; margin: 0 auto var(--s-3);">${p['Бүтээгдэхүүний танилцуулга'] || ''}</p>
+                    <div class="price" style="font-size: 24px;">₮ ${p['Худалдах үнэ'] || '0'}</div>
                 </div>
             </div>
         `;
-    },
-
-    // 📔 7. Mixed / Hybrid (Бүхний хослол - Загвар холимог)
-    hybrid: (data) => {
-        // Эхний бараа Lifestyle, дараагийнх нь Grid
-        const first = data[0] || {};
-        const others = data.slice(1, 5); // Дараагийн 4 бараа
-
-        const gridItems = others.map(p => `
-            <div class="mini-card">
-                <div class="mini-img" onclick="triggerImgUpload(this)">
-                    <img src="https://via.placeholder.com/300x300?text=Product">
-                </div>
-                <h4 contenteditable="true">${p.нэр || p.name || 'Бараа'}</h4>
-                <p>₮ ${p.үнэ || p.price || '0'}</p>
-            </div>
-        `).join('');
-
-        return `
-            <div class="hybrid-layout">
-                <div class="hybrid-top" onclick="triggerImgUpload(this)">
-                    <div class="overlay-text">
-                        <h2 contenteditable="true">ШИНЭ ЦУГЛУУЛГА</h2>
-                        <p contenteditable="true">2026 оны онцлох бүтээгдэхүүнүүд</p>
-                    </div>
-                    <img src="https://via.placeholder.com/1200x600?text=Feature+Lifestyle" alt="Main">
-                </div>
-                <div class="hybrid-bottom-grid">
-                    ${gridItems}
-                </div>
-            </div>
-        `;
-    },
+    }
 };
+
+// Reusable Card Component
+function createCard(p) {
+    return `
+        <div class="product-card">
+            <div class="img-wrapper" onclick="triggerImgUpload(this)">
+                <img src="placeholder.jpg" alt="${p['Бүтээгдэхүүний нэр']}">
+            </div>
+            <div class="product-info">
+                <div class="meta">${p['насны хязгаар'] || ''} ${p['Савлагааны хэмжээ'] || ''}</div>
+                <h3 contenteditable="true">${p['Бүтээгдэхүүний нэр'] || 'Нэр байхгүй'}</h3>
+                <p class="description" contenteditable="true">${p['Бүтээгдэхүүний танилцуулга']?.substring(0, 80) || ''}...</p>
+                <div class="price">₮ ${p['Худалдах үнэ'] || '0'}</div>
+            </div>
+        </div>
+    `;
+}
