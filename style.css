@@ -7,47 +7,160 @@
     --shadow-soft: 0 10px 30px rgba(209, 154, 102, 0.08);
 }
 
-body { font-family: 'DM Sans', sans-serif; background-color: #f7f3ed; margin: 0; padding: 40px 20px; color: var(--text-dark); }
+body { 
+    font-family: 'DM Sans', sans-serif; 
+    background-color: #f7f3ed; 
+    margin: 0; 
+    padding: 40px 20px; 
+    color: var(--text-dark); 
+}
 
 /* Admin UI */
-.admin-panel { max-width: 1200px; margin: 0 auto 50px; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.05); }
+.admin-panel { 
+    max-width: 1200px; 
+    margin: 0 auto 50px; 
+    background: white; 
+    padding: 40px; 
+    border-radius: 25px; 
+    box-shadow: 0 15px 50px rgba(0,0,0,0.05); 
+}
+
 .admin-header h2 { font-size: 28px; margin-bottom: 25px; }
 .admin-header span { color: var(--brand-color); font-size: 16px; }
 
-.grid-inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px; }
-.input-card { background: #fdfdfd; padding: 20px; border-radius: 15px; border: 1px solid #eee; }
-.input-card label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+.grid-inputs { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 25px; 
+    margin-bottom: 30px; 
+}
+
+.input-card { 
+    background: #fdfdfd; 
+    padding: 20px; 
+    border-radius: 15px; 
+    border: 1px solid #eee; 
+}
+
+.input-card label { 
+    display: block; 
+    font-weight: bold; 
+    margin-bottom: 10px; 
+    font-size: 14px; 
+}
 
 /* Template Selector */
 .section-label { display: block; margin-bottom: 15px; font-weight: bold; }
-.template-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 30px; }
-.template-option { background: white; border: 2px solid #eee; border-radius: 15px; padding: 12px; text-align: center; cursor: pointer; transition: 0.3s; }
-.template-option.active { border-color: var(--brand-color); background: rgba(209, 154, 102, 0.05); }
-.thumb { width: 100%; height: 45px; border-radius: 8px; margin-bottom: 8px; }
+.template-grid { 
+    display: grid; 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 15px; 
+    margin-bottom: 30px; 
+}
+
+.template-option { 
+    background: white; 
+    border: 2px solid #eee; 
+    border-radius: 15px; 
+    padding: 12px; 
+    text-align: center; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
+
+.template-option.active { 
+    border-color: var(--brand-color); 
+    background: rgba(209, 154, 102, 0.05); 
+}
+
+.thumb { 
+    width: 100%; 
+    height: 45px; 
+    border-radius: 8px; 
+    margin-bottom: 8px; 
+}
 
 /* Canvas & Catalog */
-#catalog-canvas { background: var(--bg-gradient); margin: 0 auto; padding: 25mm 20mm; border-radius: 20px; box-shadow: var(--shadow-soft); position: relative; }
+#catalog-canvas { 
+    background: var(--bg-gradient); 
+    margin: 0 auto; 
+    padding: 25mm 20mm; 
+    border-radius: 20px; 
+    box-shadow: var(--shadow-soft); 
+    position: relative; 
+}
+
 .size-a4 { width: 210mm; min-height: 297mm; }
 .size-a5 { width: 148mm; min-height: 210mm; }
 
-/* Header Style (Image 5) */
-.catalog-header h1 { font-size: 42px; font-weight: 200; text-transform: uppercase; letter-spacing: 5px; margin: 0; color: var(--brand-color); }
-.catalog-header h2 { font-size: 32px; font-weight: 800; margin: 5px 0 15px; color: var(--text-dark); }
-.intro-text { font-size: 15px; color: var(--text-light); max-width: 700px; line-height: 1.6; margin-bottom: 40px; }
+/* Header Style */
+.catalog-header h1 { 
+    font-size: 42px; 
+    font-weight: 200; 
+    text-transform: uppercase; 
+    letter-spacing: 5px; 
+    margin: 0; 
+    color: var(--brand-color); 
+}
+
+.catalog-header h2 { 
+    font-size: 32px; 
+    font-weight: 800; 
+    margin: 5px 0 15px; 
+    color: var(--text-dark); 
+}
+
+.intro-text { 
+    font-size: 15px; 
+    color: var(--text-light); 
+    max-width: 700px; 
+    line-height: 1.6; 
+    margin-bottom: 40px; 
+}
 
 /* Product Cards */
 .product-grid { display: grid; gap: 30px; margin-top: 20px; }
-.product-card { background: var(--card-bg); border-radius: 30px; padding: 25px; box-shadow: 0 8px 25px rgba(209, 154, 102, 0.05); transition: 0.4s; position: relative; }
+.product-card { 
+    background: var(--card-bg); 
+    border-radius: 30px; 
+    padding: 25px; 
+    box-shadow: 0 8px 25px rgba(209, 154, 102, 0.05); 
+    transition: 0.4s; 
+    position: relative; 
+}
+
 .product-card:hover { transform: translateY(-5px); }
 
-.img-container { width: 100%; height: 180px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+.img-container { 
+    width: 100%; 
+    height: 180px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 15px; 
+}
+
 .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .rating { color: #f2c94c; font-size: 14px; margin-bottom: 10px; }
 .product-card h3 { font-size: 18px; margin: 10px 0; color: var(--text-dark); }
-.product-card .desc { font-size: 13px; color: var(--text-light); line-height: 1.4; height: 3.8em; overflow: hidden; }
+.product-card .desc { 
+    font-size: 13px; 
+    color: var(--text-light); 
+    line-height: 1.4; 
+    height: 3.8em; 
+    overflow: hidden; 
+}
 
-.price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 1px solid #f5f5f5; padding-top: 15px; }
+.price-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-end; 
+    margin-top: 15px; 
+    border-top: 1px solid #f5f5f5; 
+    padding-top: 15px; 
+}
+
 .price-tag { font-size: 20px; font-weight: 800; color: var(--brand-color); }
 .packaging { font-size: 12px; color: #a0a0a0; font-style: italic; }
 
@@ -58,9 +171,64 @@ body { font-family: 'DM Sans', sans-serif; background-color: #f7f3ed; margin: 0;
 .magazine .product-card { display: flex; gap: 20px; }
 
 /* Buttons & Utils */
-.controls { display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 25px; }
-.btn-primary { background: var(--brand-color); color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; }
-.btn-dark { background: #333; color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; }
-.banner-placeholder { width: 100%; height: 180px; border: 2px dashed rgba(209, 154, 102, 0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--brand-color); margin-bottom: 30px; cursor: pointer; }
-.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-[contenteditable="true"]:focus { outline: 2px solid var(--brand-color); background: rgba(0,0,0,0.02); }
+.controls { 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 15px; 
+    margin-top: 20px; 
+    border-top: 1px solid #eee; 
+    padding-top: 25px; 
+}
+
+.btn-primary { 
+    background: var(--brand-color); 
+    color: white; 
+    border: none; 
+    padding: 12px 30px; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 15px; 
+    transition: 0.3s;
+}
+
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-dark { 
+    background: #333; 
+    color: white; 
+    border: none; 
+    padding: 12px 30px; 
+    border-radius: 12px; 
+    cursor: pointer; 
+}
+
+.banner-placeholder { 
+    width: 100%; 
+    height: 180px; 
+    border: 2px dashed rgba(209, 154, 102, 0.2); 
+    border-radius: 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--brand-color); 
+    margin-bottom: 30px; 
+    cursor: pointer; 
+}
+
+.banner-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+.visually-hidden { 
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; 
+}
+
+[contenteditable="true"]:focus { 
+    outline: 2px solid var(--brand-color); 
+    background: rgba(0,0,0,0.02); 
+    border-radius: 4px;
+}
