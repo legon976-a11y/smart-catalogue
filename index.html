@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Catalog Pro | Interactive</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="admin-panel">
+        <div class="panel-header">
+            <h2>Catalog Dashboard</h2>
+            <p>Excel, Word болон Логогоо оруулж каталогио үүсгэнэ үү.</p>
+        </div>
+
+        <div class="grid-inputs">
+            <div class="input-card">
+                <label for="excelFile">Excel (Бараанууд)</label>
+                <input type="file" id="excelFile" 
+                       accept=".xlsx, .xls" 
+                       title="Excel файл сонгох" 
+                       aria-label="Бүтээгдэхүүний жагсаалт бүхий Excel файл">
+            </div>
+            <div class="input-card">
+                <label for="wordFile">Word (Танилцуулга)</label>
+                <input type="file" id="wordFile" 
+                       accept=".docx" 
+                       title="Word файл сонгох" 
+                       aria-label="Компанийн танилцуулга бүхий Word файл">
+            </div>
+            <div class="input-card">
+                <label for="logoFile">Брэндийн Лого</label>
+                <input type="file" id="logoFile" 
+                       accept="image/*" 
+                       title="Лого сонгох" 
+                       aria-label="Брэндийн логоны зураг">
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="select-group">
+                <label for="templateSelect" class="visually-hidden">Загвар сонгох</label>
+                <select id="templateSelect" title="Загвар сонгох" aria-label="Каталогийн загвар сонгох">
+                    <option value="beauty">1. Beauty/Fashion Style</option>
+                    <option value="cosmetic">2. Clean Cosmetics</option>
+                    <option value="bakery">3. Fun/Bakery Style</option>
+                    <option value="market">4. Supermarket Grid</option>
+                    <option value="magazine">5. Modern Magazine</option>
+                    <option value="minimal">6. Luxury Minimal</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="pageSize" class="visually-hidden">Цаасны хэмжээ</label>
+                <select id="pageSize" title="Цаасны хэмжээ" aria-label="Цаасны хэмжээ сонгох">
+                    <option value="a4">A4 Standard</option>
+                    <option value="a5">A5 Booklet</option>
+                </select>
+            </div>
+
+            <button id="generateBtn" class="btn-primary" type="button">Каталоги Үүсгэх</button>
+            <button id="downloadBtn" class="btn-dark" type="button">PDF Татах</button>
+        </div>
+    </div>
+
+    <input type="file" id="hiddenBannerInput" 
+           accept="image/*" 
+           class="visually-hidden" 
+           title="Banner зураг оруулах" 
+           aria-label="Баннер зураг сонгох">
+
+    <div id="catalog-canvas" class="size-a4 beauty">
+        <div class="placeholder-text">Мэдээллээ оруулж каталогио эхлүүлнэ үү...</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
