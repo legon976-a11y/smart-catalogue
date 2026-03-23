@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Catalog Pro | Interactive</title>
+    <title>Smart Catalog v2.2</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
     <div class="admin-panel">
-        <div class="panel-header">
-            <h2>Catalog Dashboard</h2>
-            <p>Excel, Word болон Логогоо оруулж каталогио үүсгэнэ үү.</p>
+        <div class="admin-header">
+            <h2>Каталог Проект <span>v2.2</span></h2>
         </div>
 
         <div class="grid-inputs">
             <div class="input-card">
-                <label for="excelFile">Excel (Бараанууд)</label>
-                <input type="file" id="excelFile" 
-                       accept=".xlsx, .xls" 
-                       title="Excel файл сонгох" 
-                       aria-label="Бүтээгдэхүүний жагсаалт бүхий Excel файл">
+                <label for="logoFile">1. Лого (Өнгө сорох)</label>
+                <input type="file" id="logoFile" accept="image/*">
             </div>
             <div class="input-card">
-                <label for="wordFile">Word (Танилцуулга)</label>
-                <input type="file" id="wordFile" 
-                       accept=".docx" 
-                       title="Word файл сонгох" 
-                       aria-label="Компанийн танилцуулга бүхий Word файл">
+                <label for="excelFile">2. Excel файл</label>
+                <input type="file" id="excelFile" accept=".xlsx, .xls">
             </div>
             <div class="input-card">
-                <label for="logoFile">Брэндийн Лого</label>
-                <input type="file" id="logoFile" 
-                       accept="image/*" 
-                       title="Лого сонгох" 
-                       aria-label="Брэндийн логоны зураг">
+                <label for="wordFile">3. Word файл</label>
+                <input type="file" id="wordFile" accept=".docx">
             </div>
         </div>
 
-        <div class="controls">
-            <div class="select-group">
-                <label for="templateSelect" class="visually-hidden">Загвар сонгох</label>
-                <select id="templateSelect" title="Загвар сонгох" aria-label="Каталогийн загвар сонгох">
-                    <option value="beauty">1. Beauty/Fashion Style</option>
-                    <option value="cosmetic">2. Clean Cosmetics</option>
-                    <option value="bakery">3. Fun/Bakery Style</option>
-                    <option value="market">4. Supermarket Grid</option>
-                    <option value="magazine">5. Modern Magazine</option>
-                    <option value="minimal">6. Luxury Minimal</option>
-                </select>
+        <div class="template-selector-container">
+            <label>4. Загвар сонгох:</label>
+            <div class="template-grid">
+                <div class="template-option active" data-value="beauty">
+                    <div class="thumb-box beauty-thumb"></div>
+                    <span>1. Гоо сайхан</span>
+                </div>
+                <div class="template-option" data-value="cosmetic">
+                    <div class="thumb-box cosmetic-thumb"></div>
+                    <span>2. Цэвэрхэн</span>
+                </div>
+                <div class="template-option" data-value="bakery">
+                    <div class="thumb-box bakery-thumb"></div>
+                    <span>3. Амттан</span>
+                </div>
+                <div class="template-option" data-value="market">
+                    <div class="thumb-box market-thumb"></div>
+                    <span>4. Зах</span>
+                </div>
+                <div class="template-option" data-value="magazine">
+                    <div class="thumb-box magazine-thumb"></div>
+                    <span>5. Орчин үеийн</span>
+                </div>
+                <div class="template-option" data-value="minimal">
+                    <div class="thumb-box minimal-thumb"></div>
+                    <span>6. Тансаг</span>
+                </div>
             </div>
+            <input type="hidden" id="templateSelect" value="beauty">
+        </div>
 
-            <div class="select-group">
-                <label for="pageSize" class="visually-hidden">Цаасны хэмжээ</label>
-                <select id="pageSize" title="Цаасны хэмжээ" aria-label="Цаасны хэмжээ сонгох">
-                    <option value="a4">A4 Standard</option>
-                    <option value="a5">A5 Booklet</option>
-                </select>
-            </div>
-
-            <button id="generateBtn" class="btn-primary" type="button">Каталоги Үүсгэх</button>
-            <button id="downloadBtn" class="btn-dark" type="button">PDF Татах</button>
+        <div class="other-controls">
+            <select id="pageSize" aria-label="Цаасны хэмжээ сонгох">
+                <option value="a4">A4 Хэмжээ</option>
+                <option value="a5">A5 Хэмжээ</option>
+            </select>
+            <button id="generateBtn" class="btn-primary">Каталоги Үүсгэх</button>
+            <button id="downloadBtn" class="btn-dark">PDF Татах</button>
         </div>
     </div>
 
-    <input type="file" id="hiddenBannerInput" 
-           accept="image/*" 
-           class="visually-hidden" 
-           title="Banner зураг оруулах" 
-           aria-label="Баннер зураг сонгох">
+    <input type="file" id="hiddenBannerInput" accept="image/*" class="hidden-input" aria-label="Баннер оруулах">
 
     <div id="catalog-canvas" class="size-a4 beauty">
-        <div class="placeholder-text">Мэдээллээ оруулж каталогио эхлүүлнэ үү...</div>
+        <div class="placeholder-msg">Мэдээллээ оруулаад "Каталоги Үүсгэх" дарна уу.</div>
     </div>
 
     <script src="script.js"></script>
