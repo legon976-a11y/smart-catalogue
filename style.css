@@ -118,3 +118,72 @@
     color: var(--text-dark); /* Үнэ хэтэрхий тод биш, цэмцгэр */
     font-weight: 300;
 }
+
+/* --- Editorial Grid Setup --- */
+.product-grid { 
+    display: grid; 
+    gap: 30px; 
+    /* 12 баганатай систем нь InDesign-ий стандарт */
+    grid-template-columns: repeat(12, 1fr); 
+    align-items: start;
+}
+
+/* 1. Ердийн бараа (3 багана эзэлнэ = нэг эгнээнд 4 бараа) */
+.product-card {
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. "Feature" бараа (6 багана эзэлнэ = тал хуудас) */
+/* JS-ээр 5 дахь бараа болгоныг ингэж томруулна */
+.product-card.featured {
+    grid-column: span 6;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+.product-card.featured .img-container { height: 300px; flex: 1; }
+
+/* 3. "Catalog Banner" (12 багана эзэлнэ = бүтэн мөр) */
+.grid-banner {
+    grid-column: span 12;
+    height: 250px;
+    background: var(--brand-color);
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.grid-banner .banner-text {
+    position: absolute;
+    color: white;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Зураг оруулах хэсгийг цэвэрхэн болгох */
+.img-upload-label {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f9f9f9;
+    border: 1px dashed #ddd;
+    transition: 0.3s;
+}
+.img-upload-label:hover { background: #f0f0f0; }
