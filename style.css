@@ -28,15 +28,52 @@ body { font-family: 'DM Sans', sans-serif; background-color: #f4f1ee; margin: 0;
 .input-group { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: bold; }
 input[type="file"], select { padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
 
-/* Canvas (The Paper) */
+/* --- Printing Standard Setup --- */
 #catalog-canvas { 
-    width: 210mm; min-height: 297mm; background: var(--paper-bg); margin: 0 auto; 
-    padding: 20mm; position: relative; box-sizing: border-box; transition: 0.3s;
+    /* А4 хэмжээг хатуу барих */
+    width: 210mm; 
+    min-height: 297mm; 
+    height: auto;
+    
+    background: var(--paper-bg); 
+    margin: 0 auto; 
+    
+    /* Чиний хүссэн 2см (20mm) аюулгүй бүс */
+    padding: 20mm; 
+    
+    /* Энэ маш чухал: Padding-ыг өргөн дотор нь тооцно */
+    box-sizing: border-box; 
+    
+    position: relative; 
+    overflow: hidden; /* Контент цааснаас гарахгүй */
+    
+    /* Хэвлэгч төхөөрөмжид зориулсан цагаан фонт */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
-.landscape { width: 297mm !important; min-height: 210mm !important; }
 
-/* InDesign Styles */
-.product-grid { display: grid; gap: 20px; }
+/* Landscape үед мөн адил 20mm зайг барина */
+.landscape { 
+    width: 297mm !important; 
+    min-height: 210mm !important; 
+}
+
+/* InDesign шиг зүсэлтийн шугам харахыг хүсвэл (Optional) */
+#catalog-canvas::before {
+    content: "";
+    position: absolute;
+    top: 20mm; left: 20mm; right: 20mm; bottom: 20mm;
+    border: 1px dashed rgba(209, 154, 102, 0.2); /* Аюулгүй бүсийн шугам */
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Бүтээгдэхүүний Grid-ийн зайг цаасны хэмжээнд тааруулах */
+.product-grid { 
+    display: grid; 
+    gap: 10mm; /* Бараа хоорондын зай */
+    width: 100%; /* Контент 20mm padding-ийн дотор багтана */
+}
 
 /* 📘 Style 1: Grid-based */
 .grid .product-grid { grid-template-columns: repeat(3, 1fr); }

@@ -90,11 +90,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('downloadBtn').onclick = function() {
         const element = document.getElementById('catalog-canvas');
         const orientation = document.getElementById('orientation').value;
-        html2pdf().set({
-            margin: 0,
-            filename: 'catalogue.pdf',
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: orientation }
-        }).from(element).save();
+    
+        const opt = {
+            margin: 0, // CSS-ийн padding-аар шийдсэн тул энд 0 байна
+            filename: 'Dursamj_Catalogue.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: orientation 
+            }
+        };
+
+        html2pdf().set(opt).from(element).save();
     };
 });
