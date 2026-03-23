@@ -1,157 +1,100 @@
-/* script.js - v4.5 "No Deviations" Edition */
+let currentData = null;
+let activeStyle = 'grid';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Логоноос өнгө сорох
-    document.getElementById('logoFile').addEventListener('change', function(e) {
-        if (!e.target.files[0]) return;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const tempCanvas = document.createElement('canvas');
-                const ctx = tempCanvas.getContext('2d');
-                tempCanvas.width = img.width; tempCanvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                const data = ctx.getImageData(img.width/2, img.height/2, 1, 1).data;
-                const hex = "#" + ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2]).toString(16).slice(1);
-                document.documentElement.style.setProperty('--brand-color', hex);
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(e.target.files[0]);
-    });
-
-    // 2. Цаасны хэмжээ ба Өрөлтийг синхрончлох
-    const updateCanvasClass = () => {
-        const canvas = document.getElementById('catalog-canvas');
-        const size = document.getElementById('pageSize').value; // a4/a5
-        const orientation = document.getElementById('orientation').value; // portrait/landscape
-        const template = document.getElementById('templateSelect').value;
-        
-        // CSS-ийн .landscape, .size-a4 гэх мэт класс руу яг таг зааж өгнө
-        canvas.className = `size-${size} ${orientation} ${template}`;
-    };
-
-    // Сонголт өөрчлөгдөх бүрт preview-г шинэчилнэ
-    ['pageSize', 'orientation', 'templateSelect'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.addEventListener('change', updateCanvasClass);
-    });
-
-    document.querySelectorAll('.template-option').forEach(opt => {
-        opt.addEventListener('click', function() {
-            document.querySelector('.template-option.active').classList.remove('active');
+    // 1. Сонгогч идэвхжүүлэх
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.onclick = function() {
+            document.querySelector('.template-card.active').classList.remove('active');
             this.classList.add('active');
-            document.getElementById('templateSelect').value = this.dataset.style;
-            updateCanvasClass();
-        });
+            activeStyle = this.dataset.style;
+            
+            const canvas = document.getElementById('catalog-canvas');
+            const orientation = document.getElementById('orientation').value;
+            canvas.className = `size-a4 ${orientation} ${activeStyle}`;
+            
+            if (currentData) renderCatalog(currentData);
+        };
     });
 
-    // 3. Үндсэн Generate
-    document.getElementById('generateBtn').onclick = async function() {
-        const excelFile = document.getElementById('excelFile').files[0];
-        const wordFile = document.getElementById('wordFile').files[0];
-        if (!excelFile) return alert("Excel файлаа оруулна уу!");
-
-        let intro = "";
-        if (wordFile) {
-            try {
-                const buffer = await wordFile.arrayBuffer();
-                const res = await mammoth.extractRawText({ arrayBuffer: buffer });
-                intro = res.value.split('\n').filter(l => l.trim()).join('<br>');
-            } catch (e) { console.error(e); }
-        }
+    // 2. Generate
+    document.getElementById('generateBtn').onclick = function() {
+        const file = document.getElementById('excelFile').files[0];
+        if (!file) return alert("Excel файлаа оруулна уу!");
 
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            
-            const headers = Object.keys(json[0]);
-            const findCol = (keys) => headers.find(h => keys.some(k => h.toString().toLowerCase().includes(k)));
-            const map = {
-                name: findCol(['нэр', 'name', 'title']),
-                price: findCol(['үнэ', 'price']),
-                desc: findCol(['тайлбар', 'desc']),
-                img: findCol(['зураг', 'img']),
-                pkg: findCol(['савлагаа', 'size'])
-            };
-
-            renderCatalog(json, intro, map);
+            currentData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            renderCatalog(currentData);
         };
-        reader.readAsArrayBuffer(excelFile);
+        reader.readAsArrayBuffer(file);
     };
 
-    function renderCatalog(products, intro, map) {
-    const canvas = document.getElementById('catalog-canvas');
-    const grid = document.createElement('div');
-    grid.className = 'product-grid';
+    function renderCatalog(data) {
+        const canvas = document.getElementById('catalog-canvas');
+        let itemsHtml = '';
 
-    let htmlContent = '';
-    
-    products.forEach((p, index) => {
-        // 1. Аシンメトリー (Тэгш бус) өрөлт: 5 дахь бараа бүрийг томруулна
-        const isFeatured = (index + 1) % 5 === 0 ? 'featured' : '';
-        
-        // 2. Барааны карт үүсгэх
-        htmlContent += `
-            <div class="product-card ${isFeatured}">
-                <div class="img-container">
-                    <label class="img-upload-label">
-                        <input type="file" class="visually-hidden card-img-input" accept="image/*">
-                        <img src="https://via.placeholder.com/400x400?text=Зураг+сонгох" class="preview-img">
-                    </label>
-                </div>
-                <div class="p-info">
-                    <h3 contenteditable="true">${p[map.name] || 'Шинэ бараа'}</h3>
-                    <p class="desc" contenteditable="true">${p[map.desc] || 'Тайлбар...'}</p>
-                    <div class="price-tag">₮ <span contenteditable="true">${p[map.price] || '0'}</span></div>
-                </div>
-            </div>
-        `;
+        data.forEach((p, idx) => {
+            // Бараа хооронд баннер хавчуулах (Lifestyle & Editorial-д)
+            if (activeStyle === 'lifestyle' && (idx + 1) % 3 === 0) {
+                itemsHtml += `
+                    <div class="grid-banner" style="grid-column: span 2; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <p>+ Сурталчилгааны зураг (Banner)</p>
+                    </div>
+                `;
+            }
 
-        // 3. БАННЕР хавчуулах: 8 бараа тутамд нэг гоё баннер оруулна
-        if ((index + 1) % 8 === 0) {
-            htmlContent += `
-                <div class="grid-banner">
-                    <label class="img-upload-label" style="background: var(--brand-color); color:white; border:none;">
-                        <input type="file" class="visually-hidden card-img-input" accept="image/*">
-                        <span>+ Энд сурталчилгааны баннер оруулна уу</span>
-                    </label>
+            itemsHtml += `
+                <div class="product-card">
+                    <div class="img-container" onclick="triggerImgUpload(this)">
+                        <img src="https://via.placeholder.com/400?text=Зураг+солих" alt="${p.name || 'Бараа'}" class="preview-img">
+                    </div>
+                    <div class="p-info">
+                        <h3 contenteditable="true">${p.нэр || p.name || 'Барааны нэр'}</h3>
+                        <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Тайлбар...'}</p>
+                        <div class="price-tag">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
+                    </div>
                 </div>
             `;
+        });
+
+        canvas.innerHTML = `
+            <div class="catalog-header">
+                <h1 contenteditable="true">NEW COLLECTION</h1>
+                <h2 contenteditable="true">2026 EDITION</h2>
+            </div>
+            <div class="product-grid">${itemsHtml}</div>
+        `;
+    }
+
+    // 3. Зураг солих логик
+    let targetImgContainer = null;
+    window.triggerImgUpload = (el) => {
+        targetImgContainer = el;
+        document.getElementById('hiddenImgInput').click();
+    };
+
+    document.getElementById('hiddenImgInput').onchange = function(e) {
+        if (this.files && this.files[0] && targetImgContainer) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                targetImgContainer.querySelector('img').src = ev.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
         }
-    });
+    };
 
-    canvas.innerHTML = `
-        <div class="catalog-header">
-            <h1 contenteditable="true">NEW COLLECTION</h1>
-            <h2 contenteditable="true">HANDMADE WITH LOVE</h2>
-        </div>
-        <div class="product-grid">${htmlContent}</div>
-    `;
-
-    // Зураг солих функцийг идэвхжүүлэх
-    attachImageListeners();
-}
-
-function attachImageListeners() {
-    document.querySelectorAll('.card-img-input').forEach(input => {
-        input.onchange = function(e) {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                const preview = this.parentElement.querySelector('.preview-img') || this.parentElement;
-                reader.onload = (ev) => {
-                    if (preview.tagName === 'IMG') {
-                        preview.src = ev.target.result;
-                    } else {
-                        preview.innerHTML = `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
-                    }
-                };
-                reader.readAsDataURL(this.files[0]);
-            }
-        };
-    });
-}
+    // 4. PDF Татах
+    document.getElementById('downloadBtn').onclick = function() {
+        const element = document.getElementById('catalog-canvas');
+        const orientation = document.getElementById('orientation').value;
+        html2pdf().set({
+            margin: 0,
+            filename: 'catalogue.pdf',
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: orientation }
+        }).from(element).save();
+    };
 });

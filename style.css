@@ -1,189 +1,63 @@
 :root {
     --brand-color: #d19a66;
-    --text-dark: #1a1a1a; /* Илүү гүн хар */
-    --text-light: #888888;
-    --paper-white: #ffffff;
-    --grid-gap: 12mm; /* InDesign-ий стандарт зай */
+    --text-dark: #1a1a1a;
+    --text-light: #7a7a7a;
+    --paper-bg: #ffffff;
+    --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
 }
 
-/* 1. Canvas-ийг жинхэнэ ЦААС шиг болгох */
+body { font-family: 'DM Sans', sans-serif; background-color: #f4f1ee; margin: 0; padding: 20px; color: var(--text-dark); }
+
+/* Admin UI */
+.admin-panel { max-width: 1200px; margin: 0 auto 30px; background: white; padding: 30px; border-radius: 20px; box-shadow: var(--shadow-soft); }
+.admin-header h2 { margin: 0; font-size: 24px; }
+.admin-header span { color: var(--brand-color); font-size: 14px; }
+
+/* Template Selector Buttons */
+.template-selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 25px 0; }
+.template-card { 
+    background: none; border: 1px solid #eee; border-radius: 12px; padding: 15px; 
+    display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left; transition: 0.2s;
+}
+.template-card.active { border-color: var(--brand-color); background: rgba(209, 154, 102, 0.05); }
+.template-card .icon { font-size: 24px; }
+.template-card .info strong { display: block; font-size: 14px; }
+.template-card .info span { font-size: 11px; color: var(--text-light); }
+
+.controls-row { display: flex; gap: 20px; align-items: flex-end; border-top: 1px solid #eee; padding-top: 20px; }
+.input-group { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: bold; }
+input[type="file"], select { padding: 8px; border: 1px solid #ddd; border-radius: 8px; }
+
+/* Canvas (The Paper) */
 #catalog-canvas { 
-    background: var(--paper-white); 
-    margin: 0 auto; 
-    padding: 25mm 20mm; /* Жинхэнэ Margin */
-    position: relative; 
-    box-shadow: none; /* Вэб шиг сүүдрийг устгав */
-    border: 1px solid #e0e0e0; /* Хэвлэх зааг */
-    color: var(--text-dark);
+    width: 210mm; min-height: 297mm; background: var(--paper-bg); margin: 0 auto; 
+    padding: 20mm; position: relative; box-sizing: border-box; transition: 0.3s;
 }
+.landscape { width: 297mm !important; min-height: 210mm !important; }
 
-/* 2. Editorial Header (InDesign Стилийн гарчиг) */
-.catalog-header {
-    border-bottom: 2px solid var(--text-dark);
-    margin-bottom: var(--grid-gap);
-    padding-bottom: 10px;
-}
+/* InDesign Styles */
+.product-grid { display: grid; gap: 20px; }
 
-.catalog-header h1 { 
-    font-family: 'Playfair Display', serif; /* Илүү хэвлэмэл харагдах фонт */
-    font-size: 58px; 
-    font-weight: 900; 
-    text-transform: none; 
-    letter-spacing: -2px; 
-    line-height: 0.8;
-}
+/* 📘 Style 1: Grid-based */
+.grid .product-grid { grid-template-columns: repeat(3, 1fr); }
+.grid .product-card { border-bottom: 1px solid #eee; padding-bottom: 15px; }
 
-.catalog-header h2 { 
-    font-size: 14px; 
-    font-weight: 400; 
-    letter-spacing: 6px; 
-    margin: 10px 0;
-    color: var(--brand-color);
-}
+/* 📗 Style 2: Lifestyle */
+.lifestyle .product-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+.lifestyle .product-card { display: flex; flex-direction: column; gap: 15px; }
+.lifestyle .img-container { height: 350px; background: #f9f9f9; }
 
-/* 3. InDesign "Master Page" Чимэглэлүүд */
-#catalog-canvas::before {
-    content: "DURSAMJ CATALOGUE • SPRING 2026";
-    position: absolute;
-    top: 10mm;
-    left: 20mm;
-    font-size: 9px;
-    letter-spacing: 2px;
-}
+/* 📙 Style 3: Premium */
+.premium #catalog-canvas { padding: 40mm 30mm; }
+.premium .product-grid { grid-template-columns: 1fr; gap: 60px; text-align: center; }
+.premium .img-container { height: 450px; }
+.premium h3 { font-family: 'Playfair Display', serif; font-size: 32px; }
 
-/* 4. Asymmetric Grid Logic (Өрөлтийн ид шид) */
-.product-grid { 
-    display: grid; 
-    gap: var(--grid-gap); 
-    grid-template-columns: repeat(12, 1fr); /* 12 баганаар өрнө */
-    z-index: 2;
-}
+/* Reusable Components */
+.img-container { width: 100%; height: 200px; cursor: pointer; position: relative; overflow: hidden; background: #eee; }
+.img-container img { width: 100%; height: 100%; object-fit: contain; }
+.price-tag { color: var(--brand-color); font-weight: bold; font-size: 18px; margin-top: 10px; }
 
-/* 5. InDesign "Object Style" шиг карт */
-.product-card {
-    grid-column: span 4; /* Ердийн үед 3 бараа зэрэгцэнэ (12/4=3) */
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    display: block;
-}
-
-/* Эхний барааг "Hero" болгож томруулах (InDesign мэдрэмж) */
-.product-card:first-child {
-    grid-column: span 8; /* Эхний бараа 2 барааны зайг эзэлнэ */
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 30px !important;
-}
-
-.product-card:first-child .img-container {
-    height: 350px;
-    flex: 1.5;
-}
-
-/* 6. Зураг болон Текст */
-.img-container { 
-    width: 100%; 
-    height: 220px; 
-    background: #fbfbfb; /* Зөөлөн саарал суурь */
-    border-radius: 0; /* Дугуй биш, хурц ирмэг илүү "Editorial" */
-    margin-bottom: 15px; 
-}
-
-.product-card h3 { 
-    font-size: 18px; 
-    font-weight: 700; 
-    margin: 10px 0 5px; 
-    line-height: 1.2;
-}
-
-.product-card .desc { 
-    font-size: 12px; 
-    color: var(--text-light); 
-    height: auto; 
-    margin-bottom: 10px;
-}
-
-.price-row { 
-    border: none; 
-    padding: 0; 
-    justify-content: flex-start; 
-    gap: 15px;
-}
-
-.price-tag { 
-    font-size: 22px; 
-    color: var(--text-dark); /* Үнэ хэтэрхий тод биш, цэмцгэр */
-    font-weight: 300;
-}
-
-/* --- Editorial Grid Setup --- */
-.product-grid { 
-    display: grid; 
-    gap: 30px; 
-    /* 12 баганатай систем нь InDesign-ий стандарт */
-    grid-template-columns: repeat(12, 1fr); 
-    align-items: start;
-}
-
-/* 1. Ердийн бараа (3 багана эзэлнэ = нэг эгнээнд 4 бараа) */
-.product-card {
-    grid-column: span 3;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 2. "Feature" бараа (6 багана эзэлнэ = тал хуудас) */
-/* JS-ээр 5 дахь бараа болгоныг ингэж томруулна */
-.product-card.featured {
-    grid-column: span 6;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 20px;
-}
-.product-card.featured .img-container { height: 300px; flex: 1; }
-
-/* 3. "Catalog Banner" (12 багана эзэлнэ = бүтэн мөр) */
-.grid-banner {
-    grid-column: span 12;
-    height: 250px;
-    background: var(--brand-color);
-    margin: 20px 0;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.grid-banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.8;
-}
-
-.grid-banner .banner-text {
-    position: absolute;
-    color: white;
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-}
-
-/* Зураг оруулах хэсгийг цэвэрхэн болгох */
-.img-upload-label {
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f9f9f9;
-    border: 1px dashed #ddd;
-    transition: 0.3s;
-}
-.img-upload-label:hover { background: #f0f0f0; }
+.btn-primary { background: var(--brand-color); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+.btn-dark { background: #333; color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }

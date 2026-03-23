@@ -3,72 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Catalog Pro v4.2</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <title>Dursamj Catalogue Builder</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
     <div class="admin-panel">
-        <header class="admin-header">
-            <h2>Dursamj System <span>v4.2 Premium</span></h2>
-        </header>
+        <div class="admin-header">
+            <h2>Dursamj <span>Catalogue Builder</span></h2>
+            <p>Загвараа сонгоод Excel файлаа оруулна уу.</p>
+        </div>
 
-        <section class="grid-inputs">
-            <div class="input-card">
-                <label for="logoFile">1. Лого (Өнгө сорох)</label>
-                <input type="file" id="logoFile" accept="image/*" title="Лого сонгох">
-            </div>
-            <div class="input-card">
-                <label for="excelFile">2. Excel файл</label>
-                <input type="file" id="excelFile" accept=".xlsx, .xls" title="Excel файл">
-            </div>
-            <div class="input-card">
-                <label for="wordFile">3. Word файл</label>
-                <input type="file" id="wordFile" accept=".docx" title="Word файл">
-            </div>
-        </section>
+        <div class="template-selector-grid">
+            <button class="template-card active" data-style="grid" title="Grid-based загвар сонгох">
+                <span class="icon">📘</span>
+                <span class="info"><strong>Grid-based</strong><span>Тор бүтэцтэй</span></span>
+            </button>
+            <button class="template-card" data-style="lifestyle" title="Lifestyle загвар сонгох">
+                <span class="icon">📗</span>
+                <span class="info"><strong>Lifestyle</strong><span>Storytelling</span></span>
+            </button>
+            <button class="template-card" data-style="premium" title="Minimal/Premium загвар сонгох">
+                <span class="icon">📙</span>
+                <span class="info"><strong>Minimal</strong><span>Luxury Focus</span></span>
+            </button>
+            <button class="template-card" data-style="editorial" title="Editorial загвар сонгох">
+                <span class="icon">📕</span>
+                <span class="info"><strong>Editorial</strong><span>Magazine Style</span></span>
+            </button>
+            <button class="template-card" data-style="technical" title="Technical загвар сонгох">
+                <span class="icon">📒</span>
+                <span class="info"><strong>Technical</strong><span>Specs & Detail</span></span>
+            </button>
+            <button class="template-card" data-style="single" title="Single Product загвар сонгох">
+                <span class="icon">📓</span>
+                <span class="info"><strong>Single Focus</strong><span>Hero Product</span></span>
+            </button>
+            <button class="template-card" data-style="hybrid" title="Hybrid загвар сонгох">
+                <span class="icon">📔</span>
+                <span class="info"><strong>Mixed</strong><span>Бүхний хослол</span></span>
+            </button>
+        </div>
 
-        <section class="template-selector-container">
-            <label class="section-label">4. Загвар сонгох:</label>
-            <div class="template-grid">
-                <div class="template-option active" data-style="beauty"><div class="thumb beauty-thumb"></div><span>Гоо сайхан</span></div>
-                <div class="template-option" data-style="cosmetic"><div class="thumb cosmetic-thumb"></div><span>Цэвэрхэн</span></div>
-                <div class="template-option" data-style="bakery"><div class="thumb bakery-thumb"></div><span>Амттан</span></div>
-                <div class="template-option" data-style="market"><div class="thumb market-thumb"></div><span>Зах</span></div>
-                <div class="template-option" data-style="magazine"><div class="thumb magazine-thumb"></div><span>Сэтгүүл</span></div>
-                <div class="template-option" data-style="minimal"><div class="thumb minimal-thumb"></div><span>Тансаг</span></div>
+        <div class="controls-row">
+            <div class="input-group">
+                <label for="excelFile">Excel файл (Data):</label>
+                <input type="file" id="excelFile" accept=".xlsx, .xls" title="Барааны дата файл">
             </div>
-            <input type="hidden" id="templateSelect" value="beauty">
-        </section>
-
-        <footer class="action-bar">
-            <div class="settings-group">
-                <select id="pageSize" title="Хэмжээ">
-                    <option value="a4">A4</option>
-                    <option value="a5">A5</option>
-                </select>
-                <select id="orientation" title="Чиглэл">
+            <div class="input-group">
+                <label for="orientation">Цаасны чиглэл:</label>
+                <select id="orientation" title="Хэвтээ эсвэл босоо">
                     <option value="portrait">Босоо (Portrait)</option>
-                    <option value="landscape">Хөндлөн (Landscape)</option>
+                    <option value="landscape">Хэвтээ (Landscape)</option>
                 </select>
             </div>
-            <div class="btn-group">
-                <button id="generateBtn" class="btn-primary">✨ Каталоги Үүсгэх</button>
-                <button id="downloadBtn" class="btn-dark">📥 PDF Татах</button>
+            <div class="actions">
+                <button id="generateBtn" class="btn-primary" title="Каталоги үүсгэх">Generate</button>
+                <button id="downloadBtn" class="btn-dark" title="PDF татах">Download PDF</button>
             </div>
-        </footer>
+        </div>
     </div>
 
-    <input type="file" id="hiddenBannerInput" class="hidden-input" accept="image/*" aria-label="Баннер">
+    <div id="catalog-canvas" class="size-a4 portrait grid">
+        <div class="empty-state">Загвараа сонгоод Generate дарна уу...</div>
+    </div>
 
-    <main id="catalog-canvas" class="size-a4 beauty">
-        <div class="placeholder-msg">Мэдээллээ оруулаад "Каталоги Үүсгэх" дарна уу.</div>
-    </main>
-
+    <input type="file" id="hiddenImgInput" class="visually-hidden" accept="image/*" title="Зураг солих">
     <script src="script.js"></script>
 </body>
 </html>
