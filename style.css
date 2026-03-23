@@ -20,16 +20,13 @@ body { font-family: 'DM Sans', sans-serif; background-color: #f4f1ee; margin: 0;
 
 /* --- Printing Standard (Safety Margin 2cm) --- */
 #catalog-canvas { 
-    /* ... бусад тохиргоонууд ... */
+    /* ... бусад хэмжээ, padding-ийн тохиргоо ... */
 
-    /* Стандарт шинж чанар (Орчин үеийн Chrome, Edge, Safari-д) */
-    print-color-adjust: exact;
-    
-    /* Хуучин Safari болон iOS хөтөчүүдэд зориулсан угтвар */
+    /* 1. Эхлээд угтвар (Vendor prefix) */
     -webkit-print-color-adjust: exact;
-
-    /* Firefox-д зориулсан (Зарим хувилбарт шаардлагатай) */
-    color-adjust: exact;
+    
+    /* 2. Дараа нь Стандарт (Standard property) - Энэ нь хамгийн сүүлд байх ёстой */
+    print-color-adjust: exact;
 }
 
 .catalog-header h1 { font-family: 'Playfair Display', serif; font-size: 48px; margin: 0; }
@@ -87,4 +84,45 @@ body { font-family: 'DM Sans', sans-serif; background-color: #f4f1ee; margin: 0;
     color: var(--brand-color);
     display: block;
     margin-bottom: 10px;
+}
+
+/* 📒 Technical Style CSS */
+.technical .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm;
+}
+
+.tech-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: #fff;
+}
+
+.tech-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--text-dark);
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.tech-body { display: flex; gap: 15px; }
+.tech-img { flex: 1; height: 120px; background: #f0f0f0; }
+.specs { flex: 1.5; font-size: 11px; }
+
+.spec-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+.spec-row.price {
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--brand-color);
+    border: none;
+    font-size: 13px;
 }

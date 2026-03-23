@@ -75,4 +75,28 @@ const LayoutEngine = {
             </div>
         `;
     },
+    // 📒 5. Technical Style (Үзүүлэлт, Спецификаци)
+    technical: (data) => {
+        const items = data.map(p => `
+            <div class="tech-card">
+                <div class="tech-header">
+                    <h3 contenteditable="true">${p.нэр || p.name || 'MODEL-X'}</h3>
+                    <span class="sku">SKU: ${p.код || '0000'}</span>
+                </div>
+                <div class="tech-body">
+                    <div class="tech-img" onclick="triggerImgUpload(this)">
+                        <img src="https://via.placeholder.com/300x200?text=Technical+View">
+                    </div>
+                    <div class="specs">
+                        <div class="spec-row"><strong>Материал:</strong> <span contenteditable="true">${p.материал || '-'}</span></div>
+                        <div class="spec-row"><strong>Хэмжээ:</strong> <span contenteditable="true">${p.хэмжээ || '-'}</span></div>
+                        <div class="spec-row"><strong>Жин:</strong> <span contenteditable="true">${p.жин || '-'}</span></div>
+                        <div class="spec-row price"><strong>Үнэ:</strong> <span>₮ ${p.үнэ || '0'}</span></div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        return `<div class="tech-grid">${items}</div>`;
+    },
 };
