@@ -1,195 +1,140 @@
-/* ===========================================================
-   SMART CATALOG GENERATOR - COMPLETE SCRIPT (2026 Edition)
-   ===========================================================
-*/
+/* script.js - v4.0 Full Version */
 
-// 1. Логоноос өнгө сорж, брэндийн үндсэн өнгө болгох
+// 1. Логоноос өнгө сорох
 document.getElementById('logoFile').addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            tempCanvas.width = img.width; tempCanvas.height = img.height;
             ctx.drawImage(img, 0, 0);
-            
-            // Логоны төв хэсгээс өнгө сорох
             const data = ctx.getImageData(img.width/2, img.height/2, 1, 1).data;
             const hex = "#" + ((1 << 24) + (data[0] << 16) + (data[1] << 8) + data[2]).toString(16).slice(1);
-            
-            // CSS Variable-д оноох
             document.documentElement.style.setProperty('--brand-color', hex);
-            
-            // Логог өөрийг нь харуулах (Preview)
-            const logoPreview = document.getElementById('logoPreview');
-            if(logoPreview) logoPreview.src = event.target.result;
+            applyLiveStyles();
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(e.target.files[0]);
 });
 
-// 2. Banner нэмэх функц (Theme-fixes)
-function triggerBannerUpload(element) {
-    const input = document.getElementById('hiddenBannerInput');
-    input.onchange = e => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = event => {
-            element.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;" alt="Banner">`;
-            element.classList.add('has-image');
-        };
-        reader.readAsDataURL(file);
-    };
-    input.click();
-}
+// 2. Загвар сонгогч
+document.querySelectorAll('.template-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+        document.querySelector('.template-option.active').classList.remove('active');
+        this.classList.add('active');
+        document.getElementById('templateSelect').value = this.dataset.style;
+        
+        const canvas = document.getElementById('catalog-canvas');
+        if(canvas.querySelector('.product-grid')) {
+            canvas.className = `size-${document.getElementById('pageSize').value} ${this.dataset.style}`;
+            applyLiveStyles();
+        }
+    });
+});
 
-// 3. Word боловсруулах (Word Fix)
+// 3. Word parse (Mammoth)
 async function parseWord(file) {
     if (!file) return "";
     try {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.extractRawText({ arrayBuffer });
-        // Шинэ мөрийг <br> болгож солих
-        return result.value.split('\n').filter(line => line.trim().length > 0).join('<br>');
-    } catch (e) {
-        console.error("Word processing error:", e);
-        return "";
-    }
+        return result.value.split('\n').filter(l => l.trim()).join('<br>');
+    } catch (e) { return ""; }
 }
 
-// 4. Ухаалаг багана танигч (AI logic)
-function findColumn(headers, keywords) {
-    return headers.find(h => {
-        const cleanHeader = h.toString().toLowerCase().trim().replace(/\s/g, '');
-        return keywords.some(k => cleanHeader.includes(k));
-    });
-}
+// 4. Ухаалаг багана танигч
+const findColumn = (headers, keywords) => 
+    headers.find(h => keywords.some(k => h.toString().toLowerCase().includes(k)));
 
-// 5. Үндсэн Generate Логик
+// 5. Generate Logic
 document.getElementById('generateBtn').onclick = async function() {
     const excelFile = document.getElementById('excelFile').files[0];
     const wordFile = document.getElementById('wordFile').files[0];
-    const template = document.getElementById('templateSelect').value;
-    
     if (!excelFile) return alert("Excel файлаа оруулна уу!");
 
     const introText = await parseWord(wordFile);
     const reader = new FileReader();
 
     reader.onload = function(e) {
-        try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rawData = XLSX.utils.sheet_to_json(sheet);
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        
+        const headers = Object.keys(rawData[0]);
+        const colMap = {
+            name: findColumn(headers, ['нэр', 'name', 'title']),
+            price: findColumn(headers, ['үнэ', 'price']),
+            desc: findColumn(headers, ['тайлбар', 'desc', 'мэдээлэл']),
+            img: findColumn(headers, ['зураг', 'img', 'url']),
+            pkg: findColumn(headers, ['савлагаа', 'size', 'package'])
+        };
 
-            if (rawData.length === 0) return alert("Excel файл хоосон байна!");
-
-            const headers = Object.keys(rawData[0]);
-
-            // Ухаалаг хайлт: Түлхүүр үгсээр баганыг таних (Таны Excel-д тохируулсан)
-            const colMap = {
-                name: findColumn(headers, ['нэр', 'name', 'бүтээгдэхүүн', 'бараа', 'title']),
-                price: findColumn(headers, ['үнэ', 'price', 'өртөг', 'худалдах']),
-                desc: findColumn(headers, ['танилцуулга', 'desc', 'тайлбар', 'мэдээлэл', 'detail']),
-                img: findColumn(headers, ['зураг', 'img', 'url', 'photo', 'image']),
-                packaging: findColumn(headers, ['савлагаа', 'хэмжээ', 'package', 'size', 'савлагааныхэмжээ']),
-                barcode: findColumn(headers, ['баар', 'barcode', 'код', 'qr'])
-            };
-
-            // Өгөгдлийг стандартад шилжүүлж, цэвэрлэх
-            const processedProducts = rawData.map(row => ({
-                Name: row[colMap.name] || 'Нэргүй бараа',
-                Price: row[colMap.price] || '0',
-                Description: row[colMap.desc] || 'Тайлбар байхгүй',
-                ImageURL: row[colMap.img] || '', 
-                Packaging: row[colMap.packaging] || '',
-                Barcode: row[colMap.barcode] || ''
-            }));
-
-            renderCatalog(processedProducts, introText, template);
-        } catch (err) {
-            console.error("Excel Error:", err);
-            alert("Excel файлыг уншихад алдаа гарлаа.");
-        }
+        renderCatalog(rawData, introText, colMap);
     };
     reader.readAsArrayBuffer(excelFile);
 };
 
-// 6. Каталогийг зурах (Render Function)
-function renderCatalog(products, intro, template) {
+function renderCatalog(products, intro, map) {
     const canvas = document.getElementById('catalog-canvas');
+    const template = document.getElementById('templateSelect').value;
     canvas.className = `size-${document.getElementById('pageSize').value} ${template}`;
-    
-    const bannerPlaceholder = `
-        <div class="banner-placeholder" onclick="triggerBannerUpload(this)">
-            <span>+ Banner зураг энд дарж оруулна уу</span>
-        </div>`;
 
-    const productsHtml = products.map(p => {
-        // Excel Fix: Зургийн URL шалгах
-        const imgUrl = p.ImageURL ? p.ImageURL : 'https://via.placeholder.com/150?text=No+Image';
-        
-        return `
-            <div class="product-card">
-                <div class="img-container">
-                    <img src="${imgUrl}" 
-                         onerror="this.src='https://via.placeholder.com/150?text=Image+Error'" 
-                         alt="${p.Name}">
-                </div>
-                <div class="p-info">
-                    <div class="rating">★★★ <span style="color: #999; font-size:12px">(4.8)</span></div>
-                    <h3 contenteditable="true">${p.Name}</h3>
-                    <p class="desc" contenteditable="true">${p.Description}</p>
-                    <div class="price-row">
-                        <div class="meta-info">
-                            <span class="packaging" contenteditable="true">${p.Packaging}</span>
-                            ${p.Barcode ? `<br><span class="barcode" style="font-size:10px; color:#aaa;">Barcode: ${p.Barcode}</span>` : ''}
-                        </div>
-                        <div class="price-tag">
-                            <span contenteditable="true">${p.Price}</span> ₮
-                        </div>
-                    </div>
+    const items = products.map(p => `
+        <div class="product-card">
+            <div class="img-container">
+                <img src="${p[map.img] || 'https://via.placeholder.com/150'}" crossorigin="anonymous">
+            </div>
+            <div class="p-info">
+                <div class="rating">★★★★★ <span style="color:#999; font-size:10px;">(4.9)</span></div>
+                <h3 contenteditable="true">${p[map.name] || 'Бараа'}</h3>
+                <p class="desc" contenteditable="true">${p[map.desc] || 'Тайлбар байхгүй...'}</p>
+                <div class="price-row">
+                    <span class="packaging" contenteditable="true">${p[map.pkg] || ''}</span>
+                    <div class="price-tag">₮ <span contenteditable="true">${p[map.price] || '0'}</span></div>
                 </div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 
     canvas.innerHTML = `
         <div class="catalog-header">
-            ${bannerPlaceholder}
+            <div class="banner-placeholder" id="bannerBtn">+ Banner зураг оруулах</div>
             <h1 contenteditable="true">БРЭНДИЙН КАТАЛОГ</h1>
-            <h2 contenteditable="true" style="font-weight: 800; font-size: 32px; margin-top: -10px;">PREMIUM QUALITY SELECTION</h2>
-            <div class="intro-text" contenteditable="true">${intro || 'Компанийн уриа болон танилцуулга...'}</div>
+            <h2 contenteditable="true">PREMIUM SELECTION</h2>
+            <div class="intro-text" contenteditable="true">${intro || 'Танилцуулга текст энд байна...'}</div>
         </div>
-        <div class="product-grid">
-            ${productsHtml}
-        </div>
+        <div class="product-grid">${items}</div>
     `;
 
-    // 7. Dynamic Style Apply (Брэндийн өнгөөр)
-    const brandColor = getComputedStyle(document.documentElement).getPropertyValue('--brand-color').trim();
-    canvas.querySelectorAll('h1, h2, .price-tag').forEach(el => {
-        el.style.color = brandColor;
-    });
+    document.getElementById('bannerBtn').onclick = () => document.getElementById('hiddenBannerInput').click();
+    applyLiveStyles();
 }
 
-// 8. PDF Татах функц
+// 6. Баннер солих
+document.getElementById('hiddenBannerInput').onchange = function(e) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+        document.getElementById('bannerBtn').innerHTML = `<img src="${ev.target.result}" class="banner-img" style="width:100%; height:100%; object-fit:cover; border-radius:20px;">`;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+};
+
+function applyLiveStyles() {
+    const color = getComputedStyle(document.documentElement).getPropertyValue('--brand-color').trim();
+    document.querySelectorAll('.catalog-header h1, .price-tag').forEach(el => el.style.color = color);
+}
+
+// 7. PDF Татах
 document.getElementById('downloadBtn').onclick = function() {
     const element = document.getElementById('catalog-canvas');
     const opt = {
         margin: 5,
-        filename: 'Catalog_Export.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
+        filename: 'Catalog_2026.pdf',
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { 
-            unit: 'mm', 
-            format: document.getElementById('pageSize').value, 
-            orientation: 'portrait' 
-        }
+        jsPDF: { unit: 'mm', format: document.getElementById('pageSize').value, orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();
 };

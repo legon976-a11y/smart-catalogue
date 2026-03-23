@@ -1,198 +1,66 @@
-/* style.css - Бүрэн шинэчлэгдсэн дизайн */
-
 :root {
-    --brand-color: #d19a66; /* Анхдагч зөөлөн FOODEAT өнгө */
+    --brand-color: #d19a66;
     --text-dark: #3e3e3e;
     --text-light: #7a7a7a;
-    /* Зөөлөн gradient фон (Image 5 дээрх шиг) */
     --bg-gradient: linear-gradient(135deg, #fdf4ea 0%, #ffffff 100%);
     --card-bg: rgba(255, 255, 255, 0.95);
-    --shadow-soft: 0 10px 30px rgba(209, 154, 102, 0.08); /* Зөөлөн сүүдэр */
+    --shadow-soft: 0 10px 30px rgba(209, 154, 102, 0.08);
 }
 
-body {
-    font-family: 'DM Sans', sans-serif; /* Гоёмсог, цэвэрхэн фонт */
-    background-color: #f7f3ed;
-    margin: 0;
-    padding: 40px 20px;
-    color: var(--text-dark);
-}
+body { font-family: 'DM Sans', sans-serif; background-color: #f7f3ed; margin: 0; padding: 40px 20px; color: var(--text-dark); }
 
-/* --- Admin Panel Styling --- */
-.admin-panel {
-    max-width: 1200px;
-    margin: 0 auto 50px;
-    background: white;
-    padding: 40px;
-    border-radius: 25px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.05);
-}
+/* Admin UI */
+.admin-panel { max-width: 1200px; margin: 0 auto 50px; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.05); }
+.admin-header h2 { font-size: 28px; margin-bottom: 25px; }
+.admin-header span { color: var(--brand-color); font-size: 16px; }
 
-.admin-header h2 { font-size: 32px; margin-bottom: 25px; }
+.grid-inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px; }
+.input-card { background: #fdfdfd; padding: 20px; border-radius: 15px; border: 1px solid #eee; }
+.input-card label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
 
-.grid-inputs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    margin-bottom: 30px;
-}
+/* Template Selector */
+.section-label { display: block; margin-bottom: 15px; font-weight: bold; }
+.template-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-bottom: 30px; }
+.template-option { background: white; border: 2px solid #eee; border-radius: 15px; padding: 12px; text-align: center; cursor: pointer; transition: 0.3s; }
+.template-option.active { border-color: var(--brand-color); background: rgba(209, 154, 102, 0.05); }
+.thumb { width: 100%; height: 45px; border-radius: 8px; margin-bottom: 8px; }
 
-.input-card {
-    background: #fdfdfd;
-    padding: 20px;
-    border-radius: 15px;
-    border: 1px solid #eee;
-}
-
-.input-card label { display: block; font-weight: bold; margin-bottom: 10px; }
-
-/* Control Buttons */
-.controls { display: flex; gap: 15px; flex-wrap: wrap; }
-.controls select, .controls button { padding: 12px 25px; border-radius: 12px; border: 1px solid #ccc; font-size: 15px; }
-.btn-primary { background: #d19a66; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s;}
-.btn-primary:hover { opacity: 0.8; }
-.btn-dark { background: #333; color: white; cursor: pointer;}
-
-/* --- Catalog Canvas Styling --- */
-#catalog-canvas {
-    background: var(--bg-gradient); /* Зөөлөн gradient фон */
-    margin: 0 auto;
-    box-shadow: var(--shadow-soft);
-    padding: 25mm 20mm;
-    border-radius: 20px;
-    transition: all 0.5s ease-in-out;
-}
-
+/* Canvas & Catalog */
+#catalog-canvas { background: var(--bg-gradient); margin: 0 auto; padding: 25mm 20mm; border-radius: 20px; box-shadow: var(--shadow-soft); position: relative; }
 .size-a4 { width: 210mm; min-height: 297mm; }
 .size-a5 { width: 148mm; min-height: 210mm; }
 
-/* Catalog Header - Image 5 Стилиэр */
-.catalog-header h1 {
-    font-size: 48px;
-    font-weight: 200; /* Маш нарийн, гоёмсог */
-    color: var(--text-dark);
-    margin: 0 0 20px;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-}
+/* Header Style (Image 5) */
+.catalog-header h1 { font-size: 42px; font-weight: 200; text-transform: uppercase; letter-spacing: 5px; margin: 0; color: var(--brand-color); }
+.catalog-header h2 { font-size: 32px; font-weight: 800; margin: 5px 0 15px; color: var(--text-dark); }
+.intro-text { font-size: 15px; color: var(--text-light); max-width: 700px; line-height: 1.6; margin-bottom: 40px; }
 
-.catalog-header h2 {
-    font-size: 36px;
-    font-weight: 800; /* Маш тод гарчиг (Image 5 шиг) */
-    margin: 0 0 15px;
-}
-
-.catalog-header .intro-text {
-    font-size: 16px;
-    color: var(--text-light);
-    max-width: 600px;
-    margin-bottom: 40px;
-}
-
-/* --- Product Grid Styling --- */
-.product-grid {
-    display: grid;
-    gap: 30px;
-}
-
-/* Product Card Styling - Image 5 дээрх шиг бөөрөнхий хүрээтэй */
-.product-card {
-    background: var(--card-bg);
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(209, 154, 102, 0.05);
-    transition: 0.4s;
-}
-
+/* Product Cards */
+.product-grid { display: grid; gap: 30px; margin-top: 20px; }
+.product-card { background: var(--card-bg); border-radius: 30px; padding: 25px; box-shadow: 0 8px 25px rgba(209, 154, 102, 0.05); transition: 0.4s; position: relative; }
 .product-card:hover { transform: translateY(-5px); }
 
-/* Product Image Fix */
-.img-container {
-    width: 100%;
-    height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
+.img-container { width: 100%; height: 180px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+.img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.product-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Зургийг хайчлахгүй, бүрэн багтаана */
-}
+.rating { color: #f2c94c; font-size: 14px; margin-bottom: 10px; }
+.product-card h3 { font-size: 18px; margin: 10px 0; color: var(--text-dark); }
+.product-card .desc { font-size: 13px; color: var(--text-light); line-height: 1.4; height: 3.8em; overflow: hidden; }
 
-/* Product Info */
-.product-info h3 { font-size: 18px; color: var(--text-dark); margin: 5px 0; }
-.product-info .desc { font-size: 13px; color: var(--text-light); margin: 5px 0 15px; }
+.price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 1px solid #f5f5f5; padding-top: 15px; }
+.price-tag { font-size: 20px; font-weight: 800; color: var(--brand-color); }
+.packaging { font-size: 12px; color: #a0a0a0; font-style: italic; }
 
-/* Савлагааны хэмжээ (Packaging size) */
-.product-info .packaging { font-size: 12px; color: #a0a0a0; font-style: italic;}
-
-/* Rating Stars (Image 5 шиг) */
-.rating { color: #f2c94c; font-size: 14px; margin-bottom: 10px;}
-
-/* Price & Packaging Row */
-.price-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.price { font-size: 18px; font-weight: 800; color: var(--text-dark); }
-.price span { font-size: 14px; font-weight: normal; color: #999;}
-
-/* --- Template Overrides (6 загвар тус бүрээр) --- */
-
-/* 1. Beauty (Soft Pink & Playfair) */
-.beauty { font-family: 'Playfair Display', serif; --brand-color: #f17878;}
+/* Layouts */
 .beauty .product-grid { grid-template-columns: 1fr 1fr; }
-.beauty h2 { color: var(--brand-color); }
-.beauty .price { color: var(--brand-color); }
+.cosmetic .product-grid { grid-template-columns: repeat(3, 1fr); }
+.market .product-grid { grid-template-columns: repeat(4, 1fr); }
+.magazine .product-card { display: flex; gap: 20px; }
 
-/* 2. Cosmetic (Fresh Green) */
-.cosmetic { --brand-color: #38a169; --bg-gradient: linear-gradient(135deg, #e6fffa 0%, #ffffff 100%);}
-.cosmetic .product-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.cosmetic .product-card { border: 1px solid #f0f0f0;}
-
-/* 4. Market (Efficient Grid & Yellow) */
-.market { --brand-color: #f2c94c; --bg-gradient: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);}
-.market h1, .market h2 { text-align: center; }
-.market .product-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }
-.market .product-card { text-align: center; padding: 15px; border-radius: 15px; border: 1px solid #eee; }
-.market .img-container { height: 120px; }
-.market .price { color: var(--brand-color); }
-
-/* 6. Minimal (Luxury B/W & DM Sans) */
-.minimal { font-family: 'DM Sans', sans-serif; --brand-color: #1a1a1a; background: white;}
-.minimal h1 { text-transform: none; letter-spacing: 1px; font-weight: 800;}
-.minimal .product-grid { grid-template-columns: 1fr 1fr 1fr; }
-.minimal .product-card { border-radius: 0; box-shadow: none; border: 1px solid #f0f0f0;}
-.minimal img { filter: grayscale(1); }
-.minimal img:hover { filter: grayscale(0); }
-
-/* Banner Placeholder */
-.banner-placeholder {
-    width: 100%;
-    height: 180px;
-    background-color: rgba(0,0,0,0.01);
-    border: 2px dashed rgba(209, 154, 102, 0.2);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(209, 154, 102, 0.5);
-    margin-bottom: 30px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-[contenteditable="true"]:focus { outline: 2px solid var(--brand-color); background: rgba(0,0,0,0.02); padding: 2px;}
-
-@media print {
-    .admin-panel { display: none; }
-    #catalog-canvas { box-shadow: none; margin: 0; padding: 10mm; }
-    body { background: white; padding: 0;}
-}
+/* Buttons & Utils */
+.controls { display: flex; justify-content: flex-end; gap: 15px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 25px; }
+.btn-primary { background: var(--brand-color); color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 15px; }
+.btn-dark { background: #333; color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; }
+.banner-placeholder { width: 100%; height: 180px; border: 2px dashed rgba(209, 154, 102, 0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--brand-color); margin-bottom: 30px; cursor: pointer; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+[contenteditable="true"]:focus { outline: 2px solid var(--brand-color); background: rgba(0,0,0,0.02); }

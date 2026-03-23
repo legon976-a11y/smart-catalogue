@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Catalog v2.2</title>
+    <title>Smart Catalog Pro v4.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
@@ -12,71 +13,72 @@
 <body>
 
     <div class="admin-panel">
-        <div class="admin-header">
-            <h2>Каталог Проект <span>v2.2</span></h2>
-        </div>
+        <header class="admin-header">
+            <h2>Каталог Систем <span>v4.0 Premium</span></h2>
+        </header>
 
-        <div class="grid-inputs">
+        <section class="grid-inputs">
             <div class="input-card">
                 <label for="logoFile">1. Лого (Өнгө сорох)</label>
-                <input type="file" id="logoFile" accept="image/*">
+                <input type="file" id="logoFile" accept="image/*" title="Лого файл сонгох">
             </div>
             <div class="input-card">
-                <label for="excelFile">2. Excel файл</label>
-                <input type="file" id="excelFile" accept=".xlsx, .xls">
+                <label for="excelFile">2. Excel файл (Бараанууд)</label>
+                <input type="file" id="excelFile" accept=".xlsx, .xls" title="Excel файл сонгох">
             </div>
             <div class="input-card">
-                <label for="wordFile">3. Word файл</label>
-                <input type="file" id="wordFile" accept=".docx">
+                <label for="wordFile">3. Word файл (Танилцуулга)</label>
+                <input type="file" id="wordFile" accept=".docx" title="Word файл сонгох">
             </div>
-        </div>
+        </section>
 
-        <div class="template-selector-container">
-            <label>4. Загвар сонгох:</label>
-            <div class="template-grid">
-                <div class="template-option active" data-value="beauty">
-                    <div class="thumb-box beauty-thumb"></div>
+        <section class="template-selector-container">
+            <label class="section-label">4. Загвар сонгох (Image 5 Style):</label>
+            <div class="template-grid" id="styleSelector">
+                <div class="template-option active" data-style="beauty">
+                    <div class="thumb beauty-thumb"></div>
                     <span>1. Гоо сайхан</span>
                 </div>
-                <div class="template-option" data-value="cosmetic">
-                    <div class="thumb-box cosmetic-thumb"></div>
+                <div class="template-option" data-style="cosmetic">
+                    <div class="thumb cosmetic-thumb"></div>
                     <span>2. Цэвэрхэн</span>
                 </div>
-                <div class="template-option" data-value="bakery">
-                    <div class="thumb-box bakery-thumb"></div>
+                <div class="template-option" data-style="bakery">
+                    <div class="thumb bakery-thumb"></div>
                     <span>3. Амттан</span>
                 </div>
-                <div class="template-option" data-value="market">
-                    <div class="thumb-box market-thumb"></div>
+                <div class="template-option" data-style="market">
+                    <div class="thumb market-thumb"></div>
                     <span>4. Зах</span>
                 </div>
-                <div class="template-option" data-value="magazine">
-                    <div class="thumb-box magazine-thumb"></div>
-                    <span>5. Орчин үеийн</span>
+                <div class="template-option" data-style="magazine">
+                    <div class="thumb magazine-thumb"></div>
+                    <span>5. Сэтгүүл</span>
                 </div>
-                <div class="template-option" data-value="minimal">
-                    <div class="thumb-box minimal-thumb"></div>
+                <div class="template-option" data-style="minimal">
+                    <div class="thumb minimal-thumb"></div>
                     <span>6. Тансаг</span>
                 </div>
             </div>
             <input type="hidden" id="templateSelect" value="beauty">
-        </div>
+        </section>
 
-        <div class="other-controls">
-            <select id="pageSize" aria-label="Цаасны хэмжээ сонгох">
+        <footer class="controls">
+            <label for="pageSize" class="visually-hidden">Цаасны хэмжээ</label>
+            <select id="pageSize" title="Цаасны хэмжээ">
                 <option value="a4">A4 Хэмжээ</option>
                 <option value="a5">A5 Хэмжээ</option>
             </select>
             <button id="generateBtn" class="btn-primary">Каталоги Үүсгэх</button>
             <button id="downloadBtn" class="btn-dark">PDF Татах</button>
-        </div>
+        </footer>
     </div>
 
-    <input type="file" id="hiddenBannerInput" accept="image/*" class="hidden-input" aria-label="Баннер оруулах">
+    <input type="file" id="hiddenBannerInput" style="display: none;" accept="image/*" aria-label="Баннер зураг">
 
-    <div id="catalog-canvas" class="size-a4 beauty">
+    <main id="catalog-canvas" class="size-a4 beauty">
         <div class="placeholder-msg">Мэдээллээ оруулаад "Каталоги Үүсгэх" дарна уу.</div>
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
