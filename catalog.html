@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalog Layout | Legon</title>
+    <title>Каталог засварлах | Legon</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
 </head>
@@ -11,7 +11,7 @@
     <main class="split-view">
         <section class="canvas-panel">
             <div class="canvas-header">
-                <span class="page-counter">2 products / 2 pages</span>
+                <span class="page-counter">2 бараа / 2 хуудас</span>
                 <div class="pagination-controls">
                     <button class="prev" disabled>‹</button>
                     <span class="current-page">1</span>
@@ -21,8 +21,8 @@
             
             <div class="page-preview">
                 <div class="page-content-placeholder">
-                    <p class="italic-font">Select product</p>
-                    <span>[Template: Line Sheet Template]</span>
+                    <p class="italic-font">Бараа сонгох</p>
+                    <span>[Загвар: Хуудасны ерөнхий загвар]</span>
                 </div>
             </div>
         </section>
@@ -30,36 +30,40 @@
         <section class="config-panel">
             <div class="toggle-bar">
                 <div class="toggle-switch">
-                    <span class="off active">Off</span>
+                    <span class="off active">Хаалттай</span>
                     <span class="slider"></span>
                 </div>
-                <label>Use layouts</label>
+                <label>Бүтэц ашиглах</label>
             </div>
 
             <section class="config-section">
-                <h3>1. Select Grid Size</h3>
+                <h3>1. Хүснэгтийн хэмжээ</h3>
                 <div class="grid-controls">
                     <div class="selected-grid-box active">1 x 1</div>
                     
                     <div class="grid-inputs">
                         <div class="input-field">
-                            <label for="horizontal-count">Products horizontally</label>
-                            <select id="horizontal-count" name="horizontal-count">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
+                            <label for="horizontal-count">Хэвтээ тэнхлэгт</label>
+                            <select id="horizontal-count">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
                             </select>
                         </div>
                         <div class="input-field">
-                            <label for="vertical-count">Products vertically</label>
-                            <select id="vertical-count" name="vertical-count">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
+                            <label for="vertical-count">Босоо тэнхлэгт</label>
+                            <select id="vertical-count">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <p class="section-label">Predefined Grids</p>
+                <p class="section-label">Түгээмэл хүснэгтүүд</p>
                 <div class="predefined-grids">
                     <div class="grid-option active">1x1</div>
                     <div class="grid-option">1x2</div>
@@ -76,58 +80,54 @@
 
             <section class="config-section">
                 <div class="section-header">
-                    <h3>2. Grid Template</h3>
-                    <button class="btn-outline-sm">+ New template</button>
+                    <h3>2. Загвар сонгох</h3>
+                    <button class="btn-outline-sm">+ Шинэ загвар</button>
                 </div>
 
                 <div class="template-options">
                     <div class="layout-card">
                         <div class="layout-thumb basic"></div>
-                        <span>Basic Product</span>
+                        <span>Энгийн бараа</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb full"></div>
-                        <span>Full Page Product</span>
+                        <span>Бүтэн хуудас</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb variants"></div>
-                        <span>Line Sheet + Variants</span>
+                        <span>Сонголттой загвар</span>
                     </div>
                     <div class="layout-card active">
                         <div class="layout-thumb sheet"></div>
-                        <span>Line Sheet Template</span>
+                        <span>Үндсэн жагсаалт</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb lookbook"></div>
-                        <span>Lookbook Large</span>
+                        <span>Lookbook Том</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb lookbook-m"></div>
-                        <span>Lookbook Medium</span>
+                        <span>Lookbook Дунд</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb lookbook-s"></div>
-                        <span>Lookbook Small</span>
+                        <span>Lookbook Жижиг</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb showroom"></div>
-                        <span>Showroom Template</span>
+                        <span>Showroom загвар</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb row"></div>
-                        <span>Table Row</span>
+                        <span>Хүснэгтэн мөр</span>
                     </div>
                     <div class="layout-card">
                         <div class="layout-thumb vertical"></div>
-                        <span>Vertical Product</span>
+                        <span>Босоо бараа</span>
                     </div>
                 </div>
             </section>
         </section>
     </main>
-
-    <div class="support-widget mini">
-        <div class="chat-icon">💬</div>
-    </div>
 </body>
 </html>

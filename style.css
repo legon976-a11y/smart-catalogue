@@ -103,7 +103,7 @@ body {
     padding: 12px 20px;
     color: #bdc3c7;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: 0.3s;
 }
 
@@ -384,7 +384,7 @@ body {
 
 .input-field select {
     padding: 8px;
-    width: 200px;
+    width: 150px;
     border: 1px solid #ccc;
 }
 
@@ -485,4 +485,9 @@ body {
     .sidebar { display: none; }
     .split-view { flex-direction: column; }
     .canvas-panel { height: 50vh; }
+}
+
+.grid-inputs {
+    display: flex;
+    gap: 20px;
 }
