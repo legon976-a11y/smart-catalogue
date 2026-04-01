@@ -10,20 +10,31 @@
 <body>
     <header class="top-nav">
         <div class="nav-left">
-            <div class="logo-area">
-                <span class="icon-brand"></span>
+            <div class="logo-area" id="logo-home">
                 <span class="brand-name italic-font">Legon</span>
             </div>
         </div>
         <div class="nav-right">
-            <a href="#">Тусламж <span class="chevron">▾</span></a>
-            <a href="#">Миний бүртгэл <span class="chevron">▾</span></a>
-            <a href="#">Гарах</a>
+            <div class="nav-dropdown">
+                <a href="#">Тусламж ▾</a>
+                <div class="dropdown-content">
+                    <a href="#">Зааварчилгаа</a>
+                    <a href="#">Холбоо барих</a>
+                </div>
+            </div>
+            <div class="nav-dropdown">
+                <a href="#">Миний бүртгэл ▾</a>
+                <div class="dropdown-content">
+                    <a href="#">Профайл</a>
+                    <a href="#">Төлбөр тооцоо</a>
+                </div>
+            </div>
+            <a href="#" id="logout-link">Гарах</a>
         </div>
     </header>
 
     <main class="app-container">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="add-logo-box">
                     <span class="plus">+</span>
@@ -38,8 +49,8 @@
                 <div class="menu-group active">
                     <a href="#" class="menu-item active"><span>⚙</span> Каталог тохиргоо</a>
                     <div class="sub-menu">
-                        <a href="#">Каталогийн төрөл</a>
-                        <a href="#">Бүтээгдэхүүнүүд</a>
+                        <a href="#" class="active">Каталогийн төрөл</a>
+                        <a href="catalog.html">Бүтээгдэхүүнүүд</a>
                         <a href="#">Харагдах байдал</a>
                     </div>
                 </div>
@@ -48,36 +59,36 @@
             </nav>
 
             <div class="sidebar-footer">
-                <button class="btn-side orange">⚡ Каталог үүсгэх</button>
+                <button class="btn-side orange" id="side-create-btn">⚡ Каталог үүсгэх</button>
                 <button class="btn-side blue">📂 Бараа нэмэх</button>
-                <button class="btn-side gray">✕ Цуцлах</button>
+                <button class="btn-side gray" id="side-cancel-btn">✕ Цуцлах</button>
             </div>
         </aside>
 
         <section class="content-area">
             <div class="content-header">
-                <button class="hamburger">☰</button>
+                <button class="hamburger" id="mobile-burger">☰</button>
                 <h1 class="italic-font">Шинэ каталог</h1>
             </div>
 
             <div class="setup-container">
                 <div class="input-group">
-                    <input type="text" placeholder="Каталогийн нэр" class="catalog-title-input" value="Legon Каталог">
+                    <input type="text" id="catalog-name" placeholder="Каталогийн нэр" class="catalog-title-input" value="Legon Каталог">
                 </div>
 
                 <div class="prompt-header">
                     <h2>Ямар төрлийн каталог үүсгэх вэ?</h2>
-                    <p>Та загваруудыг дараа нь хэдийд ч өөрчлөх, нэгтгэх боломжтой</p>
+                    <p>Та загваруудыг дараа нь хэдийд ч өөрчлөх боломжтой</p>
                 </div>
 
                 <div class="template-grid">
-                    <div class="template-card">
+                    <div class="template-card" data-type="Хоосон">
                         <div class="preview-box empty"></div>
                         <h3>Хоосон</h3>
                         <p>Шинээр эхлэх</p>
                     </div>
 
-                    <div class="template-card active">
+                    <div class="template-card active" data-type="Бүтээгдэхүүний хүснэгт">
                         <div class="preview-box grid-icon">
                             <div class="icon-check">✓</div>
                             <span>👕</span><span>👗</span>
@@ -87,15 +98,18 @@
                         <p>Бэлэн хүснэгтэн загвар</p>
                     </div>
 
-                    <div class="template-card">
-                        <div class="preview-box list-icon"></div>
+                    <div class="template-card" data-type="Үнийн жагсаалт">
+                        <div class="preview-box list-icon">
+                            <div class="list-placeholder-item long"></div>
+                            <div class="list-placeholder-item short"></div>
+                        </div>
                         <h3>Үнийн жагсаалт</h3>
                         <p>Жагсаалт хэлбэрээр харуулах</p>
                     </div>
 
-                    <div class="template-card">
+                    <div class="template-card" data-type="Каталог загвар">
                         <div class="preview-box photo-icon">
-                            <img src="https://via.placeholder.com/150" alt="Sample">
+                            <img src="https://via.placeholder.com/80x100?text=Premium" alt="Sample">
                         </div>
                         <h3>Каталог загвар</h3>
                         <p>Бэлэн загвар ашиглах</p>
@@ -103,9 +117,9 @@
                 </div>
 
                 <div class="action-footer">
-                    <a href="catalog.html" class="btn-primary">Бүтээгдэхүүн сонгох →</a>
-                    <button class="link-btn">Тохиргоог цуцлах</button>
-                    <button class="btn-ai-helper">
+                    <button class="btn-primary" id="next-step">Бүтээгдэхүүн сонгох →</button>
+                    <button class="link-btn" id="cancel-setup-link">Тохиргоог цуцлах</button>
+                    <button class="btn-ai-helper" id="ai-build-btn">
                         <span class="ai-sparkle">✨</span> AI-аар каталог үүсгүүлэх
                     </button>
                 </div>
@@ -113,15 +127,18 @@
         </section>
     </main>
 
-    <div class="support-widget">
-        <div class="chat-bubble">
+    <div class="support-widget" id="chat-widget">
+        <div class="chat-bubble" id="chat-popover">
             <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
             <div class="chat-text">
                 <p>Сайн байна уу? Танд тусламж хэрэгтэй юу?</p>
                 <span>Андрий • Одоо</span>
             </div>
         </div>
-        <div class="chat-icon">💬<span class="notification">1</span></div>
+        <div class="chat-icon" id="chat-toggle-icon">
+            💬<span class="notification">1</span>
+        </div>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>

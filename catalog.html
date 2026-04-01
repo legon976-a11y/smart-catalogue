@@ -3,33 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог засварлах | Legon</title>
+    <title>Засварлах | Legon</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
 </head>
 <body class="editing-mode">
+    <header class="top-nav mini-nav">
+        <div class="nav-left">
+            <button class="back-btn" id="back-to-index">‹ Буцах</button>
+            <span class="brand-name italic-font">Legon Editor</span>
+        </div>
+        <div class="nav-right">
+            <button class="save-btn" id="save-catalog-btn">Хадгалах</button>
+        </div>
+    </header>
+
     <main class="split-view">
         <section class="canvas-panel">
             <div class="canvas-header">
                 <span class="page-counter">2 бараа / 2 хуудас</span>
                 <div class="pagination-controls">
-                    <button class="prev" disabled>‹</button>
+                    <button class="prev" title="Өмнөх">‹</button>
                     <span class="current-page">1</span>
-                    <button class="next">›</button>
+                    <button class="next" title="Дараах">›</button>
                 </div>
             </div>
             
             <div class="page-preview">
-                <div class="page-content-placeholder">
+                <div class="page-content-placeholder" id="main-preview">
+                    <div class="grid-visualizer" id="grid-viz">
+                        <div class="cell"></div>
+                    </div>
                     <p class="italic-font">Бараа сонгох</p>
-                    <span>[Загвар: Хуудасны ерөнхий загвар]</span>
+                    <span id="active-template-name">[Загвар: Үндсэн жагсаалт]</span>
                 </div>
             </div>
         </section>
 
         <section class="config-panel">
             <div class="toggle-bar">
-                <div class="toggle-switch">
+                <div class="toggle-switch" id="layout-toggle">
                     <span class="off active">Хаалттай</span>
                     <span class="slider"></span>
                 </div>
@@ -39,25 +52,21 @@
             <section class="config-section">
                 <h3>1. Хүснэгтийн хэмжээ</h3>
                 <div class="grid-controls">
-                    <div class="selected-grid-box active">1 x 1</div>
+                    <div class="selected-grid-box active" id="display-size">1 x 1</div>
                     
                     <div class="grid-inputs">
                         <div class="input-field">
-                            <label for="horizontal-count">Хэвтээ тэнхлэгт</label>
-                            <select id="horizontal-count">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
+                            <label for="hor-count">Хэвтээ</label>
+                            <select id="hor-count">
+                                <option value="1">1</option><option value="2">2</option>
+                                <option value="3">3</option><option value="4">4</option>
                             </select>
                         </div>
                         <div class="input-field">
-                            <label for="vertical-count">Босоо тэнхлэгт</label>
-                            <select id="vertical-count">
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
+                            <label for="ver-count">Босоо</label>
+                            <select id="ver-count">
+                                <option value="1">1</option><option value="2">2</option>
+                                <option value="3">3</option><option value="4">4</option>
                             </select>
                         </div>
                     </div>
@@ -65,69 +74,30 @@
 
                 <p class="section-label">Түгээмэл хүснэгтүүд</p>
                 <div class="predefined-grids">
-                    <div class="grid-option active">1x1</div>
-                    <div class="grid-option">1x2</div>
-                    <div class="grid-option">2x1</div>
-                    <div class="grid-option">2x2</div>
-                    <div class="grid-option">1x3</div>
-                    <div class="grid-option">2x3</div>
-                    <div class="grid-option">3x3</div>
-                    <div class="grid-option">2x4</div>
-                    <div class="grid-option">3x4</div>
-                    <div class="grid-option">4x4</div>
+                    <button class="grid-option" data-size="1x1">1x1</button>
+                    <button class="grid-option" data-size="1x2">1x2</button>
+                    <button class="grid-option" data-size="2x1">2x1</button>
+                    <button class="grid-option" data-size="2x2">2x2</button>
+                    <button class="grid-option" data-size="3x3">3x3</button>
+                    <button class="grid-option" data-size="4x4">4x4</button>
                 </div>
             </section>
 
             <section class="config-section">
                 <div class="section-header">
                     <h3>2. Загвар сонгох</h3>
-                    <button class="btn-outline-sm">+ Шинэ загвар</button>
+                    <button class="btn-outline-sm" id="new-template-btn">+ Шинэ</button>
                 </div>
 
                 <div class="template-options">
-                    <div class="layout-card">
-                        <div class="layout-thumb basic"></div>
-                        <span>Энгийн бараа</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb full"></div>
-                        <span>Бүтэн хуудас</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb variants"></div>
-                        <span>Сонголттой загвар</span>
-                    </div>
-                    <div class="layout-card active">
-                        <div class="layout-thumb sheet"></div>
-                        <span>Үндсэн жагсаалт</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb lookbook"></div>
-                        <span>Lookbook Том</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb lookbook-m"></div>
-                        <span>Lookbook Дунд</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb lookbook-s"></div>
-                        <span>Lookbook Жижиг</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb showroom"></div>
-                        <span>Showroom загвар</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb row"></div>
-                        <span>Хүснэгтэн мөр</span>
-                    </div>
-                    <div class="layout-card">
-                        <div class="layout-thumb vertical"></div>
-                        <span>Босоо бараа</span>
-                    </div>
+                    <div class="layout-card" data-name="Энгийн бараа"><div class="layout-thumb"></div><span>Энгийн</span></div>
+                    <div class="layout-card active" data-name="Үндсэн жагсаалт"><div class="layout-thumb sheet"></div><span>Жагсаалт</span></div>
+                    <div class="layout-card" data-name="Бүтэн хуудас"><div class="layout-thumb full"></div><span>Бүтэн</span></div>
+                    <div class="layout-card" data-name="Lookbook Том"><div class="layout-thumb lookbook"></div><span>Lookbook</span></div>
                 </div>
             </section>
         </section>
     </main>
+    <script src="script.js"></script>
 </body>
 </html>

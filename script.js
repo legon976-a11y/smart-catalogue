@@ -1,101 +1,84 @@
 document.addEventListener('DOMContentLoaded', () => {
-    /**
-     * 1. Каталог загвар сонгох логик (index.html)
-     * Сонгосон карт дээр идэвхтэй төлөв нэмж, 'check' тэмдэглэгээг шилжүүлнэ.
-     */
-    const cards = document.querySelectorAll('.template-card');
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            // Бусад бүх картын идэвхтэй төлөвийг устгах
-            cards.forEach(c => c.classList.remove('active'));
-            // Сонгосон картыг идэвхжүүлэх
-            card.classList.add('active');
-            
-            // Хэрэв 'check' дүрс байгаа бол түүнийг сонгосон карт руу зөөх
-            const check = document.querySelector('.icon-check');
-            const previewBox = card.querySelector('.preview-box');
-            if (check && previewBox) {
-                previewBox.appendChild(check);
+    
+    // --- 1. ШИЛЖИЛТҮҮД БОЛОН ТОВЧЛУУРУУД ---
+    const selectById = (id, callback) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', callback);
+    };
+
+    selectById('logo-home', () => window.location.href = 'index.html');
+    selectById('back-to-index', () => window.location.href = 'index.html');
+    selectById('side-create-btn', () => window.location.href = 'catalog.html');
+    selectById('logout-link', () => { if(confirm('Гарах уу?')) alert('Баяртай!'); });
+    selectById('side-cancel-btn', () => location.reload());
+    selectById('cancel-setup-link', () => { if(confirm('Цуцлах уу?')) location.reload(); });
+    selectById('ai-build-btn', () => alert('AI ачаалж байна...'));
+    selectById('save-catalog-btn', () => alert('Амжилттай хадгалагдлаа!'));
+    selectById('new-template-btn', () => alert('Удахгүй нэмэгдэнэ.'));
+
+    // Чат нээх/хаах
+    selectById('chat-toggle-icon', () => {
+        document.getElementById('chat-popover').classList.toggle('visible');
+    });
+
+    // --- 2. ДИНАМИК GRID ЛОГИК ---
+    const updateGrid = () => {
+        const hor = document.getElementById('hor-count')?.value || 1;
+        const ver = document.getElementById('ver-count')?.value || 1;
+        const gridViz = document.getElementById('grid-viz');
+        const displayBox = document.getElementById('display-size');
+
+        if (gridViz) {
+            gridViz.style.gridTemplateColumns = `repeat(${hor}, 1fr)`;
+            gridViz.innerHTML = '';
+            for (let i = 0; i < (hor * ver); i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                gridViz.appendChild(cell);
+            }
+        }
+        if (displayBox) displayBox.innerText = `${hor} x ${ver}`;
+    };
+
+    // Grid сонголт өөрчлөгдөхөд
+    ['hor-count', 'ver-count'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', updateGrid);
+    });
+
+    // Бэлэн хүснэгтүүд
+    document.querySelectorAll('.grid-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            const [h, v] = opt.dataset.size.split('x');
+            const hInput = document.getElementById('hor-count');
+            const vInput = document.getElementById('ver-count');
+            if (hInput && vInput) {
+                hInput.value = h;
+                vInput.value = v;
+                updateGrid();
             }
         });
     });
 
-    /**
-     * 2. Барааны загвар сонгох логик (catalog.html)
-     * Баруун талын жагсаалтаас сонгоход зүүн талын урьдчилсан харагдах текст өөрчлөгдөнө.
-     */
-    const layouts = document.querySelectorAll('.layout-card');
-    const previewText = document.querySelector('.page-content-placeholder span');
-
-    layouts.forEach(layout => {
-        layout.addEventListener('click', () => {
-            // Идэвхтэй төлөвийг шилжүүлэх
-            layouts.forEach(l => l.classList.remove('active'));
-            layout.classList.add('active');
-            
-            // Зүүн талын цонхны текстийг шинэчлэх
-            if (previewText) {
-                const layoutName = layout.querySelector('span').innerText;
-                previewText.innerText = `[Загвар: ${layoutName}]`;
-            }
-        });
-    });
-
-    /**
-     * 3. Бүтэц ашиглах (Toggle Switch) логик
-     * On/Off төлөвийг сольж, текстийг Монголоор харуулна.
-     */
-    const toggle = document.querySelector('.toggle-switch');
-    if (toggle) {
-        toggle.addEventListener('click', () => {
-            const isOn = toggle.classList.toggle('on');
-            const label = toggle.querySelector('.off'); // Энэ нь текстийг харуулах элемент
-            
-            if (label) {
-                label.innerText = isOn ? 'Нээлттэй' : 'Хаалттай';
-                // Текст солигдоход өнгө болон байрлал хадгалахын тулд идэвхтэй класс нэмэх
-                if (isOn) {
-                    label.classList.remove('active');
-                } else {
-                    label.classList.add('active');
+    // --- 3. ИДЭВХТЭЙ ТӨЛӨВҮҮД ---
+    const setupActiveToggle = (selector) => {
+        const items = document.querySelectorAll(selector);
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                items.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Хэрэв каталог хуудас бол нэрийг солих
+                if (selector === '.layout-card') {
+                    const nameSpan = document.getElementById('active-template-name');
+                    if (nameSpan) nameSpan.innerText = `[Загвар: ${item.dataset.name}]`;
                 }
-            }
+            });
         });
-    }
+    };
 
-    /**
-     * 4. Мобайл цэс (Hamburger) логик
-     * Жижиг дэлгэц дээр хажуугийн цэсийг нээж хаах.
-     */
-    const burger = document.querySelector('.hamburger');
-    const sidebar = document.querySelector('.sidebar');
+    setupActiveToggle('.template-card');
+    setupActiveToggle('.layout-card');
 
-    if (burger && sidebar) {
-        burger.addEventListener('click', () => {
-            // Хажуугийн цэсийг харуулах эсвэл нуух класс (CSS дээр .sidebar.open-г нэмэх хэрэгтэй)
-            sidebar.classList.toggle('mobile-visible');
-            
-            // Хэрэв CSS-гүй бол шууд alert өгөх (тестлэх зорилгоор)
-            if (window.innerWidth < 1024 && !sidebar.classList.contains('mobile-visible')) {
-                console.log("Sidebar нээгдлээ");
-            }
-        });
-    }
-
-    /**
-     * 5. Grid хэмжээ сонгох (Сонголтыг идэвхжүүлэх)
-     */
-    const gridOptions = document.querySelectorAll('.grid-option');
-    const selectedBox = document.querySelector('.selected-grid-box');
-
-    gridOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            gridOptions.forEach(opt => opt.classList.remove('active'));
-            option.classList.add('active');
-            
-            if (selectedBox) {
-                selectedBox.innerText = option.innerText;
-            }
-        });
-    });
+    // Эхний ачаалалт
+    if (document.getElementById('grid-viz')) updateGrid();
 });
