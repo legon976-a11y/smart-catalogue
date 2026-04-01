@@ -76,6 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Settings хуудасны логик
+    const saveBtn = document.getElementById('save-settings-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            // Энд хадгалах функц орно (жишээ нь API руу явуулах)
+            alert('Системийн тохиргоо амжилттай хадгалагдлаа!');
+        });
+    }
+
+    const backBtn = document.getElementById('back-to-index');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+
     setupActiveToggle('.template-card');
     setupActiveToggle('.layout-card');
 
