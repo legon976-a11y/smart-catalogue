@@ -194,3 +194,41 @@ body {
 .back-btn:hover {
     background: var(--bg-light);
 }
+/* Logo-г дарах боломжтой болгох */
+#logo-link {
+    cursor: pointer;
+}
+
+/* Header хэсгийн товчлуурын тохиргоо */
+.btn-header-action {
+    width: auto !important;
+    margin-left: auto;
+    padding: 8px 20px;
+}
+
+/* Контейнерийн зай */
+.product-table-container {
+    padding: 30px;
+}
+
+/* Хүснэгтийн үндсэн загвар */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.data-table th {
+    background: #f9f9f9;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+}
+
+.data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}

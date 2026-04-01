@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Барааны жагсаалт | Legon</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="top-nav">
+        <div class="nav-left">
+            <span class="brand-name italic-font" id="logo-link">Legon</span>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Нүүр</a>
+            <a href="settings.html">Тохиргоо</a>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <aside class="sidebar">
+            <nav class="side-menu">
+                <a href="index.html" class="menu-item"><span>⚙</span> Каталог тохиргоо</a>
+                <a href="products.html" class="menu-item active"><span>📦</span> Бараанууд</a>
+                <a href="#" class="menu-item"><span>📊</span> Тайлан</a>
+            </nav>
+        </aside>
+
+        <section class="content-area">
+            <div class="content-header">
+                <h1 class="italic-font">Миний бараанууд</h1>
+                <button class="btn-side orange btn-header-action" id="add-product-btn">+ Шинэ бараа нэмэх</button>
+            </div>
+
+            <div class="product-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Зураг</th>
+                            <th>Нэр</th>
+                            <th>Код (SKU)</th>
+                            <th>Үнэ</th>
+                            <th>Төлөв</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="img-placeholder"></div></td>
+                            <td>Жишээ бараа 1</td>
+                            <td>LG-001</td>
+                            <td>50,000₮</td>
+                            <td><span class="status-badge">Идэвхтэй</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
