@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Layout | Legon</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+</head>
+<body class="editing-mode">
+    <main class="split-view">
+        <section class="canvas-panel">
+            <div class="canvas-header">
+                <span class="page-counter">2 products / 2 pages</span>
+                <div class="pagination-controls">
+                    <button class="prev" disabled>‹</button>
+                    <span class="current-page">1</span>
+                    <button class="next">›</button>
+                </div>
+            </div>
+            
+            <div class="page-preview">
+                <div class="page-content-placeholder">
+                    <p class="italic-font">Select product</p>
+                    <span>[Template: Line Sheet Template]</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="config-panel">
+            <div class="toggle-bar">
+                <div class="toggle-switch">
+                    <span class="off active">Off</span>
+                    <span class="slider"></span>
+                </div>
+                <label>Use layouts</label>
+            </div>
+
+            <section class="config-section">
+                <h3>1. Select Grid Size</h3>
+                <div class="grid-controls">
+                    <div class="selected-grid-box active">1 x 1</div>
+                    
+                    <div class="grid-inputs">
+                        <div class="input-field">
+                            <label for="horizontal-count">Products horizontally</label>
+                            <select id="horizontal-count" name="horizontal-count">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="vertical-count">Products vertically</label>
+                            <select id="vertical-count" name="vertical-count">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="section-label">Predefined Grids</p>
+                <div class="predefined-grids">
+                    <div class="grid-option active">1x1</div>
+                    <div class="grid-option">1x2</div>
+                    <div class="grid-option">2x1</div>
+                    <div class="grid-option">2x2</div>
+                    <div class="grid-option">1x3</div>
+                    <div class="grid-option">2x3</div>
+                    <div class="grid-option">3x3</div>
+                    <div class="grid-option">2x4</div>
+                    <div class="grid-option">3x4</div>
+                    <div class="grid-option">4x4</div>
+                </div>
+            </section>
+
+            <section class="config-section">
+                <div class="section-header">
+                    <h3>2. Grid Template</h3>
+                    <button class="btn-outline-sm">+ New template</button>
+                </div>
+
+                <div class="template-options">
+                    <div class="layout-card">
+                        <div class="layout-thumb basic"></div>
+                        <span>Basic Product</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb full"></div>
+                        <span>Full Page Product</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb variants"></div>
+                        <span>Line Sheet + Variants</span>
+                    </div>
+                    <div class="layout-card active">
+                        <div class="layout-thumb sheet"></div>
+                        <span>Line Sheet Template</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb lookbook"></div>
+                        <span>Lookbook Large</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb lookbook-m"></div>
+                        <span>Lookbook Medium</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb lookbook-s"></div>
+                        <span>Lookbook Small</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb showroom"></div>
+                        <span>Showroom Template</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb row"></div>
+                        <span>Table Row</span>
+                    </div>
+                    <div class="layout-card">
+                        <div class="layout-thumb vertical"></div>
+                        <span>Vertical Product</span>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div class="support-widget mini">
+        <div class="chat-icon">💬</div>
+    </div>
+</body>
+</html>

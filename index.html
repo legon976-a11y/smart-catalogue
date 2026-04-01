@@ -1,77 +1,127 @@
 <!DOCTYPE html>
-<html lang="mn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dursamj Catalogue Builder</title>
+    <title>New Catalog | Legon</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="admin-panel">
-        <div class="admin-header">
-            <h2>Dursamj <span>Catalogue Builder</span></h2>
-            <p>Загвараа сонгоод Excel файлаа оруулна уу.</p>
-        </div>
-
-        <div class="template-selector-grid">
-            <button class="template-card active" data-style="grid" title="Grid-based загвар сонгох">
-                <span class="icon">📘</span>
-                <span class="info"><strong>Grid-based</strong><span>Тор бүтэцтэй</span></span>
-            </button>
-            <button class="template-card" data-style="lifestyle" title="Lifestyle загвар сонгох">
-                <span class="icon">📗</span>
-                <span class="info"><strong>Lifestyle</strong><span>Storytelling</span></span>
-            </button>
-            <button class="template-card" data-style="premium" title="Minimal/Premium загвар сонгох">
-                <span class="icon">📙</span>
-                <span class="info"><strong>Minimal</strong><span>Luxury Focus</span></span>
-            </button>
-            <button class="template-card" data-style="editorial" title="Editorial загвар сонгох">
-                <span class="icon">📕</span>
-                <span class="info"><strong>Editorial</strong><span>Magazine Style</span></span>
-            </button>
-            <button class="template-card" data-style="technical" title="Technical загвар сонгох">
-                <span class="icon">📒</span>
-                <span class="info"><strong>Technical</strong><span>Specs & Detail</span></span>
-            </button>
-            <button class="template-card" data-style="single" title="Single Product загвар сонгох">
-                <span class="icon">📓</span>
-                <span class="info"><strong>Single Focus</strong><span>Hero Product</span></span>
-            </button>
-            <button class="template-card" data-style="hybrid" title="Hybrid загвар сонгох">
-                <span class="icon">📔</span>
-                <span class="info"><strong>Mixed</strong><span>Бүхний хослол</span></span>
-            </button>
-        </div>
-
-        <div class="controls-row">
-            <div class="input-group">
-                <label for="excelFile">Excel файл (Data):</label>
-                <input type="file" id="excelFile" accept=".xlsx, .xls" title="Барааны дата файл">
-            </div>
-            <div class="input-group">
-                <label for="orientation">Цаасны чиглэл:</label>
-                <select id="orientation" title="Хэвтээ эсвэл босоо">
-                    <option value="portrait">Босоо (Portrait)</option>
-                    <option value="landscape">Хэвтээ (Landscape)</option>
-                </select>
-            </div>
-            <div class="actions">
-                <button id="generateBtn" class="btn-primary" title="Каталоги үүсгэх">Generate</button>
-                <button id="downloadBtn" class="btn-dark" title="PDF татах">Download PDF</button>
+    <header class="top-nav">
+        <div class="nav-left">
+            <div class="logo-area">
+                <span class="icon-brand"></span>
+                <span class="brand-name italic-font">Legon</span>
             </div>
         </div>
+        <div class="nav-right">
+            <a href="#">Help <span class="chevron">▾</span></a>
+            <a href="#">Account <span class="chevron">▾</span></a>
+            <a href="#">Sign Out</a>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="add-logo-box">
+                    <span class="plus">+</span>
+                    <div>
+                        <strong>Legon</strong>
+                        <p>Free plan</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="side-menu">
+                <div class="menu-group active">
+                    <a href="#" class="menu-item active"><span>⚙</span> Catalog Setup</a>
+                    <div class="sub-menu">
+                        <a href="#">New Catalog Type</a>
+                        <a href="#">Catalog Products</a>
+                        <a href="#">Product Grid</a>
+                    </div>
+                </div>
+                <a href="#" class="menu-item"><span>📦</span> Products <span class="badge">0</span></a>
+                <a href="#" class="menu-item"><span>☁️</span> Import <span class="badge">8</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-side orange">⚡ Catalog Setup</button>
+                <button class="btn-side blue">📂 Catalog Products</button>
+                <button class="btn-side gray">✕ Cancel Setup</button>
+            </div>
+        </aside>
+
+        <section class="content-area">
+            <div class="content-header">
+                <button class="hamburger">☰</button>
+                <h1 class="italic-font">New Catalog</h1>
+            </div>
+
+            <div class="setup-container">
+                <div class="input-group">
+                    <input type="text" placeholder="Legon Catalog" class="catalog-title-input">
+                </div>
+
+                <div class="prompt-header">
+                    <h2>What type of a catalog to set up?</h2>
+                    <p>You can add and combine any templates later</p>
+                </div>
+
+                <div class="template-grid">
+                    <div class="template-card">
+                        <div class="preview-box empty"></div>
+                        <h3>Blank</h3>
+                        <p>Start with a blank catalog</p>
+                    </div>
+
+                    <div class="template-card active">
+                        <div class="preview-box grid-icon">
+                            <div class="icon-check">✓</div>
+                            <span>👕</span><span>👗</span>
+                            <span>👗</span><span>👕</span>
+                        </div>
+                        <h3>Product Grid</h3>
+                        <p>Set up a templated product grid</p>
+                    </div>
+
+                    <div class="template-card">
+                        <div class="preview-box list-icon"></div>
+                        <h3>Price List</h3>
+                        <p>Set up a product list page</p>
+                    </div>
+
+                    <div class="template-card">
+                        <div class="preview-box photo-icon">
+                            <img src="https://via.placeholder.com/150" alt="Sample">
+                        </div>
+                        <h3>Catalog Template</h3>
+                        <p>Import pre-built catalog template</p>
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <a href="catalog.html" class="btn-primary">Select catalog products →</a>
+                    <button class="link-btn">Cancel catalog setup</button>
+                    <button class="btn-ai-helper">
+                        <span class="ai-sparkle">✨</span> Let us build your catalog
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="support-widget">
+        <div class="chat-bubble">
+            <img src="https://via.placeholder.com/40" alt="Avatar" class="avatar">
+            <div class="chat-text">
+                <p>Hi, thanks for signing up! Ask questions...</p>
+                <span>Andriy • Just now</span>
+            </div>
+        </div>
+        <div class="chat-icon">💬<span class="notification">1</span></div>
     </div>
-
-    <div id="catalog-canvas" class="size-a4 portrait grid">
-        <div class="empty-state">Загвараа сонгоод Generate дарна уу...</div>
-    </div>
-
-    <input type="file" id="hiddenImgInput" class="visually-hidden" accept="image/*" title="Зураг солих">
-    <script src="script.js"></script>
 </body>
 </html>

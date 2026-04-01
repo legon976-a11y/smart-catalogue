@@ -1,113 +1,52 @@
-let currentData = null;
-let activeStyle = 'grid';
-
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Сонгогч идэвхжүүлэх
-    document.querySelectorAll('.template-card').forEach(card => {
-        card.onclick = function() {
-            document.querySelector('.template-card.active').classList.remove('active');
-            this.classList.add('active');
-            activeStyle = this.dataset.style;
+    // 1. Template Selection logic
+    const cards = document.querySelectorAll('.template-card');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
             
-            const canvas = document.getElementById('catalog-canvas');
-            const orientation = document.getElementById('orientation').value;
-            canvas.className = `size-a4 ${orientation} ${activeStyle}`;
-            
-            if (currentData) renderCatalog(currentData);
-        };
+            // If the card has a checkmark, move it to the clicked card
+            const check = document.querySelector('.icon-check');
+            if (check) {
+                card.querySelector('.preview-box').appendChild(check);
+            }
+        });
     });
 
-    // 2. Generate
-    document.getElementById('generateBtn').onclick = function() {
-        const file = document.getElementById('excelFile').files[0];
-        if (!file) return alert("Excel файлаа оруулна уу!");
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            currentData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            renderCatalog(currentData);
-        };
-        reader.readAsArrayBuffer(file);
-    };
-
-    function renderCatalog(data) {
-        const canvas = document.getElementById('catalog-canvas');
-        let itemsHtml = '';
-
-        data.forEach((p, idx) => {
-            // Бараа хооронд баннер хавчуулах (Lifestyle & Editorial-д)
-            if (activeStyle === 'lifestyle' && (idx + 1) % 3 === 0) {
-                itemsHtml += `
-                    <div class="grid-banner" style="grid-column: span 2; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                        <p>+ Сурталчилгааны зураг (Banner)</p>
-                    </div>
-                `;
+    // 2. Layout Selection logic (Page 2)
+    const layouts = document.querySelectorAll('.layout-card');
+    layouts.forEach(layout => {
+        layout.addEventListener('click', () => {
+            layouts.forEach(l => l.classList.remove('active'));
+            layout.classList.add('active');
+            
+            // Update preview text dynamically
+            const previewText = document.querySelector('.page-content-placeholder span');
+            if (previewText) {
+                const name = layout.querySelector('span').innerText;
+                previewText.innerText = `[Template: ${name}]`;
             }
-
-            itemsHtml += `
-                <div class="product-card">
-                    <div class="img-container" onclick="triggerImgUpload(this)">
-                        <img src="https://via.placeholder.com/400?text=Зураг+солих" alt="${p.name || 'Бараа'}" class="preview-img">
-                    </div>
-                    <div class="p-info">
-                        <h3 contenteditable="true">${p.нэр || p.name || 'Барааны нэр'}</h3>
-                        <p class="desc" contenteditable="true">${p.тайлбар || p.desc || 'Тайлбар...'}</p>
-                        <div class="price-tag">₮ <span contenteditable="true">${p.үнэ || p.price || '0'}</span></div>
-                    </div>
-                </div>
-            `;
         });
+    });
 
-        canvas.innerHTML = `
-            <div class="catalog-header">
-                <h1 contenteditable="true">NEW COLLECTION</h1>
-                <h2 contenteditable="true">2026 EDITION</h2>
-            </div>
-            <div class="product-grid">${itemsHtml}</div>
-        `;
+    // 3. Grid Toggle
+    const toggle = document.querySelector('.toggle-switch');
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('on');
+            const offLabel = toggle.querySelector('.off');
+            offLabel.innerText = toggle.classList.contains('on') ? 'On' : 'Off';
+        });
     }
 
-    // 3. Зураг солих логик
-    let targetImgContainer = null;
-    window.triggerImgUpload = (el) => {
-        targetImgContainer = el;
-        document.getElementById('hiddenImgInput').click();
-    };
-
-    document.getElementById('hiddenImgInput').onchange = function(e) {
-        if (this.files && this.files[0] && targetImgContainer) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                targetImgContainer.querySelector('img').src = ev.target.result;
-            };
-            reader.readAsDataURL(this.files[0]);
-        }
-    };
-
-    // 4. PDF Татах
-    document.getElementById('downloadBtn').onclick = function() {
-        const element = document.getElementById('catalog-canvas');
-        const orientation = document.getElementById('orientation').value;
-    
-        const opt = {
-            margin: 0, // CSS-ийн padding-аар шийдсэн тул энд 0 байна
-            filename: 'Dursamj_Catalogue.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                logging: false,
-                letterRendering: true
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: orientation 
-            }
-        };
-
-        html2pdf().set(opt).from(element).save();
-    };
+    // 4. Sidebar Hamburger (Mobile)
+    const burger = document.querySelector('.hamburger');
+    const sidebar = document.querySelector('.sidebar');
+    if (burger) {
+        burger.addEventListener('click', () => {
+            // Simple toggle for mobile view if implemented
+            alert("Navigation menu would open here on mobile.");
+        });
+    }
 });
