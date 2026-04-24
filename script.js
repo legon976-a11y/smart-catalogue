@@ -569,4 +569,222 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update cart badge on page load
     updateCartBadge();
 
+    // ===== EXCEL IMPORT SYSTEM =====
+    
+    let excelData = [];
+    const excelModal = document.getElementById('excel-modal');
+    const excelModalCard = document.getElementById('excel-modal-card');
+    const excelFileInput = document.getElementById('excel-file-input');
+    const excelDropZone = document.getElementById('excel-drop-zone');
+    const excelPreview = document.getElementById('excel-preview');
+    const excelPreviewTable = document.getElementById('excel-preview-table');
+    const importExcelConfirmBtn = document.getElementById('import-excel-btn-confirm');
+
+    // Open Excel modal
+    document.getElementById('import-excel-btn').addEventListener('click', () => {
+        excelModal.classList.remove('hidden');
+        setTimeout(() => {
+            excelModal.classList.remove('opacity-0');
+            excelModalCard.classList.remove('scale-95');
+        }, 10);
+    });
+
+    // Close Excel modal
+    document.getElementById('close-excel-modal-btn').addEventListener('click', () => {
+        excelModal.classList.add('opacity-0');
+        excelModalCard.classList.add('scale-95');
+        setTimeout(() => excelModal.classList.add('hidden'), 300);
+        excelPreview.classList.add('hidden');
+        excelData = [];
+        importExcelConfirmBtn.disabled = true;
+    });
+
+    // Excel file upload
+    excelDropZone.addEventListener('click', () => excelFileInput.click());
+
+    excelFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) processExcelFile(file);
+    });
+
+    // Drag and drop
+    excelDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        excelDropZone.style.borderColor = '#3b82f6';
+        excelDropZone.style.backgroundColor = '#eff6ff';
+    });
+
+    excelDropZone.addEventListener('dragleave', () => {
+        excelDropZone.style.borderColor = '#d1d5db';
+        excelDropZone.style.backgroundColor = 'transparent';
+    });
+
+    excelDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        excelDropZone.style.borderColor = '#d1d5db';
+        excelDropZone.style.backgroundColor = 'transparent';
+        const file = e.dataTransfer.files[0];
+        if (file) processExcelFile(file);
+    });
+
+    function processExcelFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                if (jsonData.length === 0) {
+                    alert('Excel файл хоосон байна!');
+                    return;
+                }
+
+                // Validate columns
+                const requiredColumns = ['Нэр', 'Үнэ', 'Зүйл'];
+                const headers = Object.keys(jsonData[0]);
+                const hasRequiredColumns = requiredColumns.every(col => 
+                    headers.some(h => h.toLowerCase().includes(col.toLowerCase()))
+                );
+
+                if (!hasRequiredColumns) {
+                    alert(`Excel файлд дараах баганууд байх ёстой:\n${requiredColumns.join(', ')}`);
+                    return;
+                }
+
+                excelData = jsonData.map(row => {
+                    // Normalize column names (case-insensitive)
+                    const normalized = {};
+                    Object.keys(row).forEach(key => {
+                        const lowerKey = key.toLowerCase().trim();
+                        if (lowerKey.includes('нэр')) normalized.name = row[key];
+                        else if (lowerKey.includes('үнэ')) normalized.price = row[key];
+                        else if (lowerKey.includes('зүйл')) normalized.category = row[key];
+                        else if (lowerKey.includes('хангагч')) normalized.author = row[key];
+                        else if (lowerKey.includes('зураг')) normalized.imageUrl = row[key];
+                        else if (lowerKey.includes('тайлбар')) normalized.description = row[key];
+                    });
+                    return normalized;
+                });
+
+                displayExcelPreview();
+                importExcelConfirmBtn.disabled = false;
+            } catch (error) {
+                alert('Excel файлыг уншихад алдаа гарлаа: ' + error.message);
+                console.error(error);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function displayExcelPreview() {
+        excelPreview.classList.remove('hidden');
+        const thead = excelPreviewTable.querySelector('thead');
+        const tbody = excelPreviewTable.querySelector('tbody');
+
+        // Clear existing content
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (excelData.length === 0) return;
+
+        // Create headers
+        const headerRow = document.createElement('tr');
+        ['Нэр', 'Үнэ', 'Зүйл', 'Хангагч'].forEach(col => {
+            const th = document.createElement('th');
+            th.className = 'px-4 py-2 text-left font-bold text-gray-700 bg-gray-100 border-b';
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        // Display first 5 rows
+        excelData.slice(0, 5).forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-4 py-2 border-b">${row.name || '-'}</td>
+                <td class="px-4 py-2 border-b">${row.price || '-'}</td>
+                <td class="px-4 py-2 border-b text-sm">${row.category || '-'}</td>
+                <td class="px-4 py-2 border-b text-sm">${row.author || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (excelData.length > 5) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="4" class="px-4 py-2 text-center text-gray-500 text-sm">+ ${excelData.length - 5} бусад мөр</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    importExcelConfirmBtn.addEventListener('click', () => {
+        if (excelData.length === 0) return;
+
+        // Check if we need to update mock products or add to existing
+        const importedProducts = excelData.map((row, index) => ({
+            id: `excel-${Date.now()}-${index}`,
+            name: row.name || 'Нэргүй',
+            price: row.price || '$0',
+            desc: row.description || row.category || 'Импортолсон бараа',
+            author: row.author || 'Импорт',
+            category: row.category || 'Ерөнхий',
+            transparentImg: row.imageUrl || 'https://cdn.pixabay.com/photo/2016/11/19/15/50/chair-1840011_1280.png'
+        }));
+
+        // Add imported products to mockProducts
+        mockProducts.push(...importedProducts);
+
+        // Re-render product cards
+        renderProductCards();
+
+        // Show success message
+        alert(`${importedProducts.length} бараа амжилттай импортлогдлоо!`);
+
+        // Close modal
+        document.getElementById('close-excel-modal-btn').click();
+    });
+
+    // Download sample Excel template
+    window.downloadSampleExcel = function() {
+        const sampleData = [
+            {
+                'Нэр': 'Сайн ширээ',
+                'Үнэ': '$250',
+                'Зүйл': 'Тавилга',
+                'Хангагч': 'Легон',
+                'Тайлбар': 'Орчин үеийн загвартай чанартай ширээ'
+            },
+            {
+                'Нэр': 'Эргүүлэх сандал',
+                'Үнэ': '$180',
+                'Зүйл': 'Сандалс',
+                'Хангагч': 'Дизайн Студио',
+                'Тайлбар': 'Ажлын орчны хэрэгцээнд үндэслэлтэй сандал'
+            },
+            {
+                'Нэр': '4K Интернет ТВ',
+                'Үнэ': '$600',
+                'Зүйл': 'Электроник',
+                'Хангагч': 'Техно',
+                'Тайлбар': 'Үндсэн техникийн параметр бүхий цахилгаан болт'
+            }
+        ];
+
+        const worksheet = XLSX.utils.json_to_sheet(sampleData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Бараа');
+        
+        // Set column widths
+        worksheet['!cols'] = [
+            { wch: 20 },
+            { wch: 12 },
+            { wch: 15 },
+            { wch: 20 },
+            { wch: 40 }
+        ];
+
+        XLSX.writeFile(workbook, 'baraa_template.xlsx');
+    };
+
 });
