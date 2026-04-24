@@ -125,6 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         console.log(`Theme shifted to: ${currentTheme.styleName}`);
+        if (typeof renderCatalogPages === 'function') {
+            renderCatalogPages();
+        }
     }
 
     // --- Product Data ---
@@ -203,133 +206,216 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function getQRCodeUrl(text) {
-        return \`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=\${encodeURIComponent(text)}&color=000000&bgcolor=ffffff00\`;
+        return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(text)}&color=000000&bgcolor=ffffff00`;
     }
 
     function getBarcodeUrl(text) {
-        return \`https://bwipjs-api.metafloor.com/?bcid=code128&text=\${encodeURIComponent(text)}&scale=2&height=10&includetext=true\`;
+        return `https://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(text)}&scale=2&height=10&includetext=true`;
     }
 
-    function insertProductToCatalog(prod) {
-        const layouts = ['center', 'right', 'left'];
-        const type = layouts[layoutIndex % layouts.length];
-        layoutIndex++;
+    // ===== PAPER SIZE & LAYOUT SELECTOR =====
+    
+    const paperSizeSelect = document.getElementById('paper-size-select');
+    const customSizeInputs = document.getElementById('custom-size-inputs');
+    const paperWidthInput = document.getElementById('paper-width');
+    const paperHeightInput = document.getElementById('paper-height');
+    
+    let currentPaperWidth = '210mm';
+    let currentPaperHeight = '297mm';
 
-        let sectionHtml = '';
-        const qrCode = getQRCodeUrl(prod.id);
-        const barcode = getBarcodeUrl(prod.id);
-
-        // Theme props
-        const t = currentTheme;
-        const fontSerif = \`font-family: '\${t.fontSerif}', serif;\`;
-        const fontSans = \`font-family: '\${t.fontSans}', sans-serif;\`;
-        const textColor = t.textColor || 'text-gray-500';
-        const titleColor = t.titleColor || 'text-gray-800';
-
-        if (type === 'center') {
-            sectionHtml = \`
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex flex-col justify-center py-20 \${t.bgColor} relative overflow-hidden">
-                <div class="absolute inset-0 pointer-events-none" style="\${t.pattern}"></div>
-                \${t.decoration}
-                <div class="max-w-7xl mx-auto w-full px-12 relative flex items-center">
-                    <div class="w-1/3 z-20">
-                        <h2 class="text-6xl font-bold tracking-tight \${titleColor} mb-2" style="\${fontSerif}">\${prod.name}</h2>
-                        <p class="text-[9px] uppercase tracking-[0.2em] font-bold text-gray-500 mb-6 border-b \${t.borderColor} pb-2 inline-block" style="\${fontSans}">By \${prod.author}</p>
-                        <p class="text-3xl font-bold \${t.accentColor}" style="\${fontSans}">\${prod.price}</p>
-                    </div>
-
-                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] z-10 pointer-events-none">
-                        <img src="\${prod.transparentImg}" class="w-full \${t.shadow} \${t.roundness} opacity-95 animate-in-view mix-blend-multiply">
-                    </div>
-
-                    <div class="w-1/3 ml-auto z-20 text-right">
-                        <h4 class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-4 flex justify-end gap-4 items-center" style="\${fontSans}">
-                            PRODUCT DETAILS <span class="w-6 h-px bg-gray-300"></span>
-                        </h4>
-                        <p class="text-[11px] leading-relaxed \${textColor} mb-8 max-w-[280px] ml-auto block" style="\${fontSans}">
-                            \${prod.desc}
-                        </p>
-                        
-                        <div class="flex items-center justify-end gap-6 border-t \${t.borderColor} pt-8 opacity-70 mix-blend-multiply">
-                            <img src="\${barcode}" class="h-10 mix-blend-multiply opacity-80" alt="Barcode">
-                            <img src="\${qrCode}" class="h-16 mix-blend-multiply" alt="QR Code">
-                        </div>
-                    </div>
-                </div>
-            </section>
-            \`;
-        } else if (type === 'right') {
-            sectionHtml = \`
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center py-20 \${t.bgColor} relative overflow-hidden">
-                <div class="absolute inset-0 pointer-events-none" style="\${t.pattern}"></div>
-                \${t.decoration}
-                <div class="w-1/2 pl-24 z-20">
-                    <h4 class="text-[9px] uppercase font-bold tracking-[0.3em] text-gray-400 mb-6 flex items-center gap-4" style="\${fontSans}">
-                        <span class="w-8 h-px bg-gray-300"></span> PREMIUM SELECTION
-                    </h4>
-                    <h2 class="text-5xl font-bold tracking-tight \${titleColor} mb-2" style="\${fontSerif}">\${prod.name}</h2>
-                    <p class="text-2xl font-bold \${t.accentColor} mb-10" style="\${fontSans}">\${prod.price}</p>
-                    
-                    <p class="text-xs leading-loose \${textColor} mb-8 max-w-sm" style="\${fontSans}">
-                        \${prod.desc}
-                    </p>
-
-                    <div class="flex items-center gap-6 mt-12 bg-white/40 p-6 \${t.roundness} w-max backdrop-blur-sm border border-white/50 shadow-sm relative overflow-hidden">
-                        <img src="\${qrCode}" class="h-20 mix-blend-multiply" alt="QR Code">
-                        <div>
-                            <p class="text-[8px] font-bold uppercase tracking-widest text-gray-400 mb-2" style="\${fontSans}">Scan & Buy</p>
-                            <img src="\${barcode}" class="h-8 mix-blend-multiply opacity-80" alt="Barcode">
-                        </div>
-                    </div>
-                </div>
-                <div class="absolute right-[200px] top-1/2 -translate-y-1/2 w-[800px] z-10 pointer-events-none">
-                    <img src="\${prod.transparentImg}" class="w-full \${t.shadow} \${t.roundness} animate-in-view mix-blend-multiply">
-                </div>
-            </section>
-            \`;
+    function updatePaperSize() {
+        const val = paperSizeSelect.value;
+        if(val === 'Custom') {
+            customSizeInputs.classList.remove('hidden');
+            customSizeInputs.classList.add('flex');
+            const w = paperWidthInput.value || 210;
+            const h = paperHeightInput.value || 297;
+            currentPaperWidth = w + 'mm';
+            currentPaperHeight = h + 'mm';
         } else {
-            sectionHtml = \`
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center justify-end py-20 \${t.bgColor} relative overflow-hidden">
-                <div class="absolute inset-0 pointer-events-none" style="\${t.pattern}"></div>
-                \${t.decoration}
-                <div class="absolute -left-20 top-1/2 -translate-y-1/2 w-[700px] z-10 pointer-events-none">
-                    <img src="\${prod.transparentImg}" class="w-full \${t.shadow} \${t.roundness} animate-in-view mix-blend-multiply">
-                </div>
-
-                <div class="w-1/2 pr-24 z-20 text-left pl-32 relative">
-                    <div class="absolute left-16 top-0 bottom-0 w-px \${t.borderColor} border-l border-dashed"></div>
-                    
-                    <h2 class="text-6xl font-bold tracking-tight \${titleColor} mb-1" style="\${fontSerif}">\${prod.name}</h2>
-                    <p class="text-[9px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-6 pb-2 inline-block" style="\${fontSans}">By \${prod.author}</p>
-                    <p class="text-3xl font-bold \${t.accentColor} mb-10" style="\${fontSans}">\${prod.price}</p>
-                    
-                    <div class="mb-10 text-xs uppercase tracking-widest font-bold text-gray-400 flex items-center gap-3" style="\${fontSans}">
-                        <span class="w-4 h-px bg-gray-400"></span> OVERVIEW <span class="w-4 h-px bg-gray-400"></span>
-                    </div>
-
-                    <p class="text-sm leading-loose \${textColor} mb-12 max-w-md italic" style="\${fontSerif}">
-                        "\${prod.desc}"
-                    </p>
-
-                    <div class="flex items-end gap-8 bg-black/5 p-8 \${t.roundness} w-max relative overflow-hidden">
-                        <div class="text-center">
-                            <img src="\${qrCode}" class="h-20 mix-blend-multiply mb-3" alt="QR Code">
-                            <p class="text-[9px] uppercase tracking-widest font-bold text-gray-500" style="\${fontSans}">Scan Me</p>
-                        </div>
-                        <img src="\${barcode}" class="h-10 mix-blend-multiply opacity-80" alt="Barcode">
-                    </div>
-                </div>
-            </section>
-            \`;
+            customSizeInputs.classList.add('hidden');
+            customSizeInputs.classList.remove('flex');
+            if(val === 'A4') { currentPaperWidth = '210mm'; currentPaperHeight = '297mm'; }
+            if(val === 'A3') { currentPaperWidth = '297mm'; currentPaperHeight = '420mm'; }
+            if(val === 'A5') { currentPaperWidth = '148mm'; currentPaperHeight = '210mm'; }
+            if(val === 'Square') { currentPaperWidth = '210mm'; currentPaperHeight = '210mm'; }
         }
+        renderCatalogPages();
+    }
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(sectionHtml, 'text/html');
-        catalogContainer.appendChild(doc.body.firstChild);
-        
+    paperSizeSelect.addEventListener('change', updatePaperSize);
+    paperWidthInput.addEventListener('input', updatePaperSize);
+    paperHeightInput.addEventListener('input', updatePaperSize);
+
+    // Layout Modal
+    const layoutModal = document.getElementById('layout-modal');
+    const layoutModalCard = document.getElementById('layout-modal-card');
+    const applyLayoutBtn = document.getElementById('apply-layout-btn');
+    let selectedLayoutType = 'hero-grid'; // Default layout
+
+    document.querySelectorAll('.layout-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.layout-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            selectedLayoutType = opt.dataset.layout;
+            applyLayoutBtn.disabled = false;
+        });
+    });
+
+    applyLayoutBtn.addEventListener('click', () => {
+        closeLayoutModal();
+        renderCatalogPages();
+    });
+
+    document.getElementById('close-layout-modal-btn').addEventListener('click', closeLayoutModal);
+
+    function openLayoutModal() {
+        layoutModal.classList.remove('hidden');
         setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }, 100);
+            layoutModal.classList.remove('opacity-0');
+            layoutModalCard.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closeLayoutModal() {
+        layoutModal.classList.add('opacity-0');
+        layoutModalCard.classList.add('scale-95');
+        setTimeout(() => layoutModal.classList.add('hidden'), 300);
+    }
+
+    // ===== SMART GRID ENGINE =====
+
+    let placedProducts = [];
+
+    // Replace old insertProductToCatalog
+    function insertProductToCatalog(prod) {
+        placedProducts.push(prod);
+        
+        // If this is the first product, ask for layout
+        if(placedProducts.length === 1) {
+            openLayoutModal();
+        } else {
+            renderCatalogPages();
+        }
+    }
+
+    document.getElementById('smart-arrange-btn').addEventListener('click', () => {
+        if(placedProducts.length === 0) {
+            alert('Эхлээд бараа оруулна уу!');
+            return;
+        }
+        // Smart Arrange: Sort by price descending to put most expensive items in "Big" slots
+        placedProducts.sort((a, b) => {
+            const priceA = parseFloat(a.price.replace(/[^0-9.]/g, '')) || 0;
+            const priceB = parseFloat(b.price.replace(/[^0-9.]/g, '')) || 0;
+            return priceB - priceA;
+        });
+        
+        openLayoutModal(); // Let user pick layout, then it will render
+    });
+
+    function getProductSlotHTML(prod, slotClass, isBig) {
+        if(!prod) return `<div class="product-slot ${slotClass} border-2 border-dashed border-gray-300 opacity-50 flex items-center justify-center text-gray-400 font-bold uppercase text-xs">Empty Slot</div>`;
+        
+        const t = currentTheme;
+        const titleSize = isBig ? 'text-4xl' : 'text-lg';
+        const priceSize = isBig ? 'text-2xl' : 'text-md';
+
+        return `
+            <div class="product-slot ${slotClass} group bg-white border ${t.borderColor} shadow-sm">
+                <img src="${prod.transparentImg}" alt="Product" class="mix-blend-multiply" onclick="swapImage(this, '${prod.id}')">
+                <div class="product-info-box ${t.bgColor}">
+                    <h3 class="${titleSize} font-bold ${t.titleColor} mb-1" style="font-family: '${t.fontSerif}', serif;" contenteditable="true">${prod.name}</h3>
+                    <p class="text-[9px] uppercase tracking-widest text-gray-400 mb-2" contenteditable="true">${prod.author}</p>
+                    <p class="${priceSize} font-bold ${t.accentColor}" contenteditable="true">${prod.price}</p>
+                </div>
+                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <img src="${getQRCodeUrl(prod.id)}" class="w-10 h-10 mix-blend-multiply">
+                </div>
+            </div>
+        `;
+    }
+
+    // Swapping image on click
+    window.swapImage = function(imgEl, prodId) {
+        const newUrl = prompt('Шинэ зургийн URL холбоосыг оруулна уу:');
+        if(newUrl) {
+            imgEl.src = newUrl;
+            // Update in data
+            const p = placedProducts.find(x => x.id === prodId);
+            if(p) p.transparentImg = newUrl;
+        }
+    };
+
+    function renderCatalogPages() {
+        if(placedProducts.length === 0) return;
+        emptyState?.remove();
+        catalogContainer.innerHTML = '';
+
+        const capacityMap = {
+            'hero-grid': 5,
+            'magazine-left': 4,
+            'bento-box': 4,
+            'classic-3x3': 9,
+            'feature-row': 3
+        };
+        const cap = capacityMap[selectedLayoutType] || 5;
+
+        for(let i = 0; i < placedProducts.length; i += cap) {
+            const pageItems = placedProducts.slice(i, i + cap);
+            const pageEl = document.createElement('div');
+            pageEl.className = `catalog-page ${currentTheme.bgColor}`;
+            pageEl.style.width = currentPaperWidth;
+            pageEl.style.height = currentPaperHeight;
+
+            // Add Theme Pattern
+            const patternEl = document.createElement('div');
+            patternEl.className = 'absolute inset-0 pointer-events-none';
+            patternEl.style = currentTheme.pattern;
+            pageEl.appendChild(patternEl);
+            pageEl.insertAdjacentHTML('beforeend', currentTheme.decoration);
+
+            const gridContainer = document.createElement('div');
+            gridContainer.className = `strict-grid layout-${selectedLayoutType} relative z-10`;
+
+            let innerHtml = '';
+
+            if (selectedLayoutType === 'hero-grid') {
+                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                innerHtml += `<div class="sub-grid">`;
+                for(let j=1; j<5; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                innerHtml += `</div>`;
+            } 
+            else if (selectedLayoutType === 'magazine-left') {
+                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                innerHtml += `<div class="sub-grid">`;
+                for(let j=1; j<4; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                innerHtml += `</div>`;
+            }
+            else if (selectedLayoutType === 'bento-box') {
+                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                innerHtml += getProductSlotHTML(pageItems[1], 'slot-med-1', false);
+                innerHtml += getProductSlotHTML(pageItems[2], 'slot-med-2', false);
+                innerHtml += getProductSlotHTML(pageItems[3], 'slot-long', false);
+            }
+            else if (selectedLayoutType === 'classic-3x3') {
+                for(let j=0; j<9; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+            }
+            else if (selectedLayoutType === 'feature-row') {
+                for(let j=0; j<3; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+            }
+
+            gridContainer.innerHTML = innerHtml;
+            pageEl.appendChild(gridContainer);
+
+            // Add Page Number
+            const pageNum = document.createElement('div');
+            pageNum.className = `absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest font-bold ${currentTheme.textColor}`;
+            pageNum.innerText = `Page ${Math.floor(i / cap) + 1}`;
+            pageEl.appendChild(pageNum);
+
+            catalogContainer.appendChild(pageEl);
+        }
     }
 
     document.getElementById('print-catalog-btn').addEventListener('click', () => {
@@ -365,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItems.push(product);
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
         updateCartBadge();
-        alert(\`\${product.name} has been added to cart!\`);
+        alert(`${product.name} has been added to cart!`);
     }
 
     function openCart() {
@@ -374,21 +460,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        let cartHtml = '<h2>Shopping Cart</h2>\\n';
+        let cartHtml = '<h2>Shopping Cart</h2>\n';
         let total = 0;
         
         cartItems.forEach((item, index) => {
             const price = parseInt(item.price.replace(/[$,]/g, '')) || 0;
             total += price;
-            cartHtml += \`<p>\${index + 1}. \${item.name} - \${item.price}</p>\\n\`;
+            cartHtml += `<p>${index + 1}. ${item.name} - ${item.price}</p>\n`;
         });
         
-        cartHtml += \`\\n<p><strong>Total: $\${total}</strong></p>\\n\`;
+        cartHtml += `\n<p><strong>Total: $${total}</strong></p>\n`;
         cartHtml += '<button onclick="clearCart()">Clear Cart</button>';
         
         // Could open in modal or new page - for now showing alert with items
         const cartWindow = window.open();
-        cartWindow.document.write(\`
+        cartWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
@@ -404,15 +490,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="container">
                     <h1>🛒 Shopping Cart</h1>
                     <hr>
-                    \${cartItems.map((item, idx) => \`<p><strong>\${idx + 1}.</strong> \${item.name} - \${item.price}</p>\`).join('')}
+                    ${cartItems.map((item, idx) => `<p><strong>${idx + 1}.</strong> ${item.name} - ${item.price}</p>`).join('')}
                     <hr>
-                    <h2>Total: $\${total}</h2>
+                    <h2>Total: $${total}</h2>
                     <button onclick="alert('Thank you for your order!'); window.close();">Checkout</button>
                     <button onclick="window.close();">Close</button>
                 </div>
             </body>
             </html>
-        \`);
+        `);
     }
 
     function clearCart() {
@@ -428,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         
         if (matching.length === 0) {
-            alert(\`No products found in \${category} category\`);
+            alert(`No products found in ${category} category`);
             return;
         }
 
@@ -450,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openContact() {
         const contactWindow = window.open();
-        contactWindow.document.write(\`
+        contactWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
@@ -531,13 +617,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         const name = document.getElementById('name').value;
                         const email = document.getElementById('email').value;
                         const message = document.getElementById('message').value;
-                        alert('Thank you for contacting us, ' + name + '!\\\\nWe will get back to you at ' + email + ' soon.');
+                        alert('Thank you for contacting us, ' + name + '!\\nWe will get back to you at ' + email + ' soon.');
                         window.close();
                     }
                 </script>
             </body>
             </html>
-        \`);
+        `);
     }
 
     // Add navigation click handlers
@@ -649,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
 
                 if (!hasRequiredColumns) {
-                    alert(\`Excel файлд дараах баганууд байх ёстой:\\n\${requiredColumns.join(', ')}\`);
+                    alert(`Excel файлд дараах баганууд байх ёстой:\n${requiredColumns.join(', ')}`);
                     return;
                 }
 
@@ -702,18 +788,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Display first 5 rows
         excelData.slice(0, 5).forEach(row => {
             const tr = document.createElement('tr');
-            tr.innerHTML = \`
-                <td class="px-4 py-2 border-b">\${row.name || '-'}</td>
-                <td class="px-4 py-2 border-b">\${row.price || '-'}</td>
-                <td class="px-4 py-2 border-b text-sm">\${row.category || '-'}</td>
-                <td class="px-4 py-2 border-b text-sm">\${row.author || '-'}</td>
-            \`;
+            tr.innerHTML = `
+                <td class="px-4 py-2 border-b">${row.name || '-'}</td>
+                <td class="px-4 py-2 border-b">${row.price || '-'}</td>
+                <td class="px-4 py-2 border-b text-sm">${row.category || '-'}</td>
+                <td class="px-4 py-2 border-b text-sm">${row.author || '-'}</td>
+            `;
             tbody.appendChild(tr);
         });
 
         if (excelData.length > 5) {
             const tr = document.createElement('tr');
-            tr.innerHTML = \`<td colspan="4" class="px-4 py-2 text-center text-gray-500 text-sm">+ \${excelData.length - 5} бусад мөр</td>\`;
+            tr.innerHTML = `<td colspan="4" class="px-4 py-2 text-center text-gray-500 text-sm">+ ${excelData.length - 5} бусад мөр</td>`;
             tbody.appendChild(tr);
         }
     }
@@ -723,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Check if we need to update mock products or add to existing
         const importedProducts = excelData.map((row, index) => ({
-            id: \`excel-\${Date.now()}-\${index}\`,
+            id: `excel-${Date.now()}-${index}`,
             name: row.name || 'Нэргүй',
             price: row.price || '$0',
             desc: row.description || row.category || 'Импортолсон бараа',
@@ -739,7 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProductCards();
 
         // Show success message
-        alert(\`\${importedProducts.length} бараа амжилттай импортлогдлоо!\`);
+        alert(`${importedProducts.length} бараа амжилттай импортлогдлоо!`);
 
         // Close modal
         document.getElementById('close-excel-modal-btn').click();
