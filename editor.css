@@ -1,0 +1,107 @@
+/* Base Overrides for Editor */
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}
+input[type="range"] {
+    height: 4px;
+    border-radius: 4px;
+    background: #e2e8f0;
+    outline: none;
+    -webkit-appearance: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #6b21a8;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Tool Buttons Layout */
+.tool-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #64748b;
+    border: 1px solid transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.tool-btn i {
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.tool-btn .tool-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tool-btn:hover {
+    background: #f8fafc;
+    color: #475569;
+}
+
+.tool-btn:hover i {
+    transform: translateY(-2px);
+}
+
+.tool-btn.active {
+    background: #fff;
+    color: #6b21a8;
+    border-color: #e9d5ff;
+    box-shadow: 0 4px 12px rgba(107, 33, 168, 0.08);
+}
+
+/* Canvas wrapper animation */
+#canvas-wrapper {
+    transition: transform 0.3s ease-out;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+}
+
+/* Align buttons */
+.align-btn.active {
+    background-color: white;
+    color: #6b21a8;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Animations */
+@keyframes wand-sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+.ai-sparkle {
+    animation: wand-sparkle 1.5s ease-in-out infinite;
+}
