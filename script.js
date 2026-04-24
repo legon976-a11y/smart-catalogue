@@ -138,21 +138,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Picker
     const listContainer = document.getElementById('mock-product-list');
-    listContainer.innerHTML = mockProducts.map(p => `
-        <div class="product-picker-card bg-white p-4 rounded-3xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300 group" data-id="${p.id}">
-            <div class="h-32 mb-4 rounded-xl overflow-hidden relative flex items-center justify-center p-2 bg-gray-50/50">
-                <img src="${p.transparentImg}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition duration-500 drop-shadow-md">
-                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                    <span class="text-white font-bold text-[10px] bg-black/70 px-4 py-2 rounded-full uppercase tracking-widest"><i class="fa-solid fa-plus mr-1"></i> НЭМЭХ</span>
+    
+    function renderProductCards() {
+        listContainer.innerHTML = mockProducts.map(p => `
+            <div class="product-picker-card bg-white p-4 rounded-3xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300 group" data-id="${p.id}">
+                <div class="h-32 mb-4 rounded-xl overflow-hidden relative flex items-center justify-center p-2 bg-gray-50/50">
+                    <img src="${p.transparentImg}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition duration-500 drop-shadow-md">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                        <span class="text-white font-bold text-[10px] bg-black/70 px-4 py-2 rounded-full uppercase tracking-widest"><i class="fa-solid fa-plus mr-1"></i> НЭМЭХ</span>
+                    </div>
                 </div>
+                <h4 class="font-bold text-sm text-gray-800 font-serif">${p.name}</h4>
+                <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest font-bold">${p.price}</p>
+                <button class="add-to-cart-btn mt-3 w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-2 px-2 rounded transition" data-product-id="${p.id}">
+                    <i class="fa-solid fa-shopping-cart mr-1"></i> Add to Cart
+                </button>
             </div>
-            <h4 class="font-bold text-sm text-gray-800 font-serif">${p.name}</h4>
-            <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest font-bold">${p.price}</p>
-        </div>
-    `).join('');
+        `).join('');
+
+        // Attach event listeners to product cards
+        document.querySelectorAll('.product-picker-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.closest('.add-to-cart-btn')) {
+                    const pId = e.currentTarget.dataset.id;
+                    const prod = mockProducts.find(p => p.id === pId);
+                    insertProductToCatalog(prod);
+                    document.getElementById('close-modal-btn').click();
+                    if (emptyState) emptyState.remove();
+                }
+            });
+        });
+
+        // Attach event listeners to cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const productId = btn.dataset.productId;
+                const prod = mockProducts.find(p => p.id === productId);
+                addToCart(prod);
+            });
+        });
+    }
+    
+    renderProductCards();
 
     const modal = document.getElementById('product-modal');
     const modalInner = document.getElementById('product-modal-card');
+    const catalogContainer = document.getElementById('catalog-sections');
+    const emptyState = document.getElementById('empty-state');
+    let layoutIndex = 0;
     
     document.getElementById('add-product-btn').addEventListener('click', () => {
         modal.classList.remove('hidden');
@@ -166,20 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('opacity-0');
         modalInner.classList.add('scale-95');
         setTimeout(() => modal.classList.add('hidden'), 300);
-    });
-
-    const catalogContainer = document.getElementById('catalog-sections');
-    const emptyState = document.getElementById('empty-state');
-    let layoutIndex = 0;
-
-    document.querySelectorAll('.product-picker-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            const pId = e.currentTarget.dataset.id;
-            const prod = mockProducts.find(p => p.id === pId);
-            insertProductToCatalog(prod);
-            document.getElementById('close-modal-btn').click();
-            if (emptyState) emptyState.remove();
-        });
     });
 
     function getQRCodeUrl(text) {
@@ -318,5 +338,235 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial style update
     updateGlobalStyles();
+
+    // ===== NAVIGATION & CART SYSTEM =====
+    
+    // Product categories mapping
+    const productCategories = {
+        'Tables': ['Floating Table'],
+        'Chairs': ['Lumber', 'Elke Stool'],
+        'TV Sets': ['Sandwich TV Set'],
+        'Sofas': ['Hemper Sofa']
+    };
+
+    // Cart management
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+    function updateCartBadge() {
+        const cartBadge = document.getElementById('cart-badge');
+        if (cartBadge) {
+            const cartCount = cartItems.length;
+            cartBadge.textContent = cartCount > 0 ? cartCount : '3';
+            cartBadge.style.display = cartCount > 0 ? 'flex' : 'flex'; // Always show for now
+        }
+    }
+
+    function addToCart(product) {
+        cartItems.push(product);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        updateCartBadge();
+        alert(`${product.name} has been added to cart!`);
+    }
+
+    function openCart() {
+        if (cartItems.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+        
+        let cartHtml = '<h2>Shopping Cart</h2>\n';
+        let total = 0;
+        
+        cartItems.forEach((item, index) => {
+            const price = parseInt(item.price.replace(/[$,]/g, '')) || 0;
+            total += price;
+            cartHtml += `<p>${index + 1}. ${item.name} - ${item.price}</p>\n`;
+        });
+        
+        cartHtml += `\n<p><strong>Total: $${total}</strong></p>\n`;
+        cartHtml += '<button onclick="clearCart()">Clear Cart</button>';
+        
+        // Could open in modal or new page - for now showing alert with items
+        const cartWindow = window.open();
+        cartWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Shopping Cart | Legon</title>
+                <style>
+                    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+                    .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+                    button { padding: 10px 20px; background: #fbbf24; border: none; border-radius: 4px; cursor: pointer; }
+                    button:hover { background: #f59e0b; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🛒 Shopping Cart</h1>
+                    <hr>
+                    ${cartItems.map((item, idx) => `<p><strong>${idx + 1}.</strong> ${item.name} - ${item.price}</p>`).join('')}
+                    <hr>
+                    <h2>Total: $${total}</h2>
+                    <button onclick="alert('Thank you for your order!'); window.close();">Checkout</button>
+                    <button onclick="window.close();">Close</button>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+
+    function clearCart() {
+        cartItems = [];
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        updateCartBadge();
+        alert('Cart cleared!');
+    }
+
+    function filterProductsByCategory(category) {
+        const matching = mockProducts.filter(p => 
+            productCategories[category]?.includes(p.name)
+        );
+        
+        if (matching.length === 0) {
+            alert(`No products found in ${category} category`);
+            return;
+        }
+
+        // Clear current catalog
+        catalogContainer.innerHTML = '';
+        emptyState?.remove();
+
+        // Insert matching products
+        layoutIndex = 0;
+        matching.forEach(prod => {
+            insertProductToCatalog(prod);
+        });
+
+        // Scroll to catalog
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
+    }
+
+    function openContact() {
+        const contactWindow = window.open();
+        contactWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Contact Us | Legon</title>
+                <style>
+                    body { 
+                        font-family: 'Inter', Arial; 
+                        padding: 20px; 
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        min-height: 100vh;
+                    }
+                    .container { 
+                        max-width: 500px; 
+                        margin: 0 auto; 
+                        background: white; 
+                        padding: 40px; 
+                        border-radius: 12px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                    }
+                    h1 { color: #333; margin-bottom: 20px; }
+                    .form-group { margin-bottom: 15px; }
+                    label { display: block; margin-bottom: 5px; color: #555; font-weight: 600; }
+                    input, textarea { 
+                        width: 100%; 
+                        padding: 10px; 
+                        border: 1px solid #ddd; 
+                        border-radius: 4px;
+                        font-family: inherit;
+                        box-sizing: border-box;
+                    }
+                    textarea { resize: vertical; min-height: 120px; }
+                    button { 
+                        width: 100%; 
+                        padding: 12px; 
+                        background: #667eea; 
+                        color: white; 
+                        border: none; 
+                        border-radius: 4px; 
+                        cursor: pointer;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                    button:hover { background: #5568d3; }
+                    .contact-info { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+                    .contact-info p { margin: 10px 0; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>📞 Contact Us</h1>
+                    <form onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit">Send Message</button>
+                    </form>
+                    
+                    <div class="contact-info">
+                        <h3>Other Ways to Reach Us</h3>
+                        <p>📧 Email: info@legon.mn</p>
+                        <p>📞 Phone: +976 (0) 123-4567</p>
+                        <p>📍 Address: Ulaanbaatar, Mongolia</p>
+                        <p>⏰ Hours: 9 AM - 6 PM (Mon-Fri)</p>
+                    </div>
+                </div>
+                <script>
+                    function handleContactSubmit(e) {
+                        e.preventDefault();
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+                        const message = document.getElementById('message').value;
+                        alert('Thank you for contacting us, ' + name + '!\\nWe will get back to you at ' + email + ' soon.');
+                        window.close();
+                    }
+                </script>
+            </body>
+            </html>
+        `);
+    }
+
+    // Add navigation click handlers
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const categoryText = this.querySelector('span').textContent.trim();
+            
+            if (categoryText === 'Cart') {
+                openCart();
+            } else if (categoryText === 'Contact') {
+                openContact();
+            } else {
+                // It's a product category (Tables, Chairs, TV Sets, Sofas)
+                filterProductsByCategory(categoryText);
+            }
+        });
+
+        // Add hover effect
+        item.style.cursor = 'pointer';
+        item.addEventListener('mouseenter', function() {
+            this.style.opacity = '1';
+        });
+        item.addEventListener('mouseleave', function() {
+            this.style.opacity = '0.8';
+        });
+    });
+
+    // Update cart badge on page load
+    updateCartBadge();
 
 });
