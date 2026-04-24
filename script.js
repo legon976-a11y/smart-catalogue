@@ -5,74 +5,76 @@ document.addEventListener('DOMContentLoaded', () => {
         luxury: {
             fontSerif: 'Playfair Display',
             fontSans: 'Inter',
-            bgColor: 'bg-softBeige',
-            accentColor: 'text-amber-800',
-            borderColor: 'border-amber-200',
+            bgColor: 'bg-[#FCFAF6]',
+            accentColor: 'text-[#4A4A4A]',
+            borderColor: 'border-[#D4AF37]', // Gold accent
             roundness: 'rounded-none',
-            shadow: 'shadow-2xl',
+            shadow: 'shadow-[0_10px_50px_rgba(0,0,0,0.05)]',
+            pattern: 'background-image: radial-gradient(#d4af37 0.5px, transparent 0.5px); background-size: 30px 30px; opacity: 0.1;',
+            decoration: '<div class="absolute top-0 right-0 w-32 h-64 border-r border-[#D4AF37] opacity-20"></div>',
             styleName: 'Luxurious'
         },
         kids: {
-            fontSerif: 'Fredoka', // Needs to be loaded
-            fontSans: 'Quicksand', // Needs to be loaded
-            bgColor: 'bg-softPink',
-            accentColor: 'text-rose-500',
-            borderColor: 'border-rose-100',
-            roundness: 'rounded-[60px]',
-            shadow: 'shadow-lg',
-            styleName: 'Soft & Playful'
+            fontSerif: 'Fredoka',
+            fontSans: 'Quicksand',
+            bgColor: 'bg-[#FFF9F2]',
+            accentColor: 'text-[#F472B6]',
+            borderColor: 'border-[#F9A8D4]',
+            roundness: 'rounded-[100px]',
+            shadow: 'shadow-[0_20px_40px_rgba(244,114,182,0.1)]',
+            pattern: 'background-image: radial-gradient(#f9a8d4 2px, transparent 2px); background-size: 40px 40px; opacity: 0.2;',
+            decoration: '<div class="absolute top-10 left-10 w-20 h-20 bg-blue-100 rounded-full opacity-40 blur-xl"></div><div class="absolute bottom-10 right-20 w-32 h-32 bg-yellow-100 rounded-full opacity-40 blur-2xl"></div>',
+            styleName: 'Kids & Playful'
         },
         food: {
             fontSerif: 'Playfair Display',
             fontSans: 'Inter',
-            bgColor: 'bg-[#f4f9f4]',
-            accentColor: 'text-green-700',
-            borderColor: 'border-green-100',
-            roundness: 'rounded-3xl',
+            bgColor: 'bg-[#F4F9F4]',
+            accentColor: 'text-[#15803D]',
+            borderColor: 'border-[#86EFAC]',
+            roundness: 'rounded-[40px]',
             shadow: 'shadow-md',
-            styleName: 'Fresh & Natural'
-        },
-        fashion: {
-            fontSerif: 'Cinzel', // Needs to be loaded
-            fontSans: 'Inter',
-            bgColor: 'bg-white',
-            accentColor: 'text-black',
-            borderColor: 'border-gray-200',
-            roundness: 'rounded-none',
-            shadow: 'shadow-none',
-            styleName: 'Elegant Fashion'
+            pattern: 'background-image: repeating-linear-gradient(45deg, #86efac 0, #86efac 1px, transparent 0, transparent 50%); background-size: 20px 20px; opacity: 0.1;',
+            decoration: '<div class="absolute -top-10 -left-10 w-40 h-40 border-[20px] border-green-50 rounded-full opacity-50"></div>',
+            styleName: 'Fresh & Organic'
         },
         electronics: {
-            fontSerif: 'Orbitron', // Needs to be loaded
-            fontSans: 'Roboto', // Needs to be loaded
-            bgColor: 'bg-[#0a0a0c]',
-            accentColor: 'text-blue-500',
-            borderColor: 'border-blue-900',
-            textColor: 'text-gray-300',
+            fontSerif: 'Orbitron',
+            fontSans: 'Roboto',
+            bgColor: 'bg-[#050505]',
+            accentColor: 'text-[#3B82F6]',
+            borderColor: 'border-[#1E3A8A]',
+            textColor: 'text-gray-400',
             titleColor: 'text-white',
-            roundness: 'rounded-lg',
-            shadow: 'shadow-[0_0_30px_rgba(59,130,246,0.2)]',
+            roundness: 'rounded-none',
+            shadow: 'shadow-[0_0_50px_rgba(59,130,246,0.3)]',
+            pattern: 'background-image: linear-gradient(#1e3a8a 1px, transparent 1px), linear-gradient(90deg, #1e3a8a 1px, transparent 1px); background-size: 50px 50px; opacity: 0.15;',
+            decoration: '<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>',
             styleName: 'Cyber & Tech'
         },
         sport: {
-            fontSerif: 'Oswald', // Needs to be loaded
+            fontSerif: 'Oswald',
             fontSans: 'Inter',
-            bgColor: 'bg-[#f0f0f0]',
-            accentColor: 'text-orange-600',
-            borderColor: 'border-orange-500',
-            roundness: 'rounded-sm',
-            shadow: 'shadow-xl',
-            styleName: 'Active & Bold'
+            bgColor: 'bg-white',
+            accentColor: 'text-black',
+            borderColor: 'border-black',
+            roundness: 'rounded-none',
+            shadow: 'shadow-2xl',
+            pattern: 'background-image: linear-gradient(135deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent 100%); background-size: 4px 4px; opacity: 0.05;',
+            decoration: '<div class="absolute top-0 right-0 w-1/2 h-full bg-black/5 -skew-x-12 transform translate-x-20"></div>',
+            styleName: 'Bold Athletic'
         },
         health: {
             fontSerif: 'Inter',
             fontSans: 'Inter',
             bgColor: 'bg-white',
-            accentColor: 'text-cyan-600',
-            borderColor: 'border-cyan-100',
-            roundness: 'rounded-2xl',
+            accentColor: 'text-[#0891B2]',
+            borderColor: 'border-[#CFFAFE]',
+            roundness: 'rounded-3xl',
             shadow: 'shadow-sm',
-            styleName: 'Medical & Clean'
+            pattern: 'background-image: radial-gradient(#cffafe 1px, transparent 1px); background-size: 20px 20px; opacity: 0.5;',
+            decoration: '<div class="absolute top-1/2 left-0 w-full h-[1px] bg-cyan-100 opacity-50"></div>',
+            styleName: 'Healthy & Pure'
         }
     };
 
@@ -109,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateGlobalStyles() {
-        // Dynamically load fonts if needed
+        // Dynamically load fonts
         const fonts = [currentTheme.fontSerif, currentTheme.fontSans];
         fonts.forEach(font => {
             const fontId = `font-${font.replace(/\s+/g, '-')}`;
@@ -122,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Apply body class or properties if needed (mostly handled during insertion)
         console.log(`Theme shifted to: ${currentTheme.styleName}`);
     }
 
@@ -207,7 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (type === 'center') {
             sectionHtml = `
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex flex-col justify-center py-20 ${t.bgColor}">
+            <section class="catalog-section pr-[300px] min-h-[90vh] flex flex-col justify-center py-20 ${t.bgColor} relative overflow-hidden">
+                <div class="absolute inset-0 pointer-events-none" style="${t.pattern}"></div>
+                ${t.decoration}
                 <div class="max-w-7xl mx-auto w-full px-12 relative flex items-center">
                     <div class="w-1/3 z-20">
                         <h2 class="text-6xl font-bold tracking-tight ${titleColor} mb-2" style="${fontSerif}">${prod.name}</h2>
@@ -237,7 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         } else if (type === 'right') {
             sectionHtml = `
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center py-20 ${t.bgColor}">
+            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center py-20 ${t.bgColor} relative overflow-hidden">
+                <div class="absolute inset-0 pointer-events-none" style="${t.pattern}"></div>
+                ${t.decoration}
                 <div class="w-1/2 pl-24 z-20">
                     <h4 class="text-[9px] uppercase font-bold tracking-[0.3em] text-gray-400 mb-6 flex items-center gap-4" style="${fontSans}">
                         <span class="w-8 h-px bg-gray-300"></span> PREMIUM SELECTION
@@ -249,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${prod.desc}
                     </p>
 
-                    <div class="flex items-center gap-6 mt-12 bg-white/40 p-6 ${t.roundness} w-max backdrop-blur-sm border border-white/50">
+                    <div class="flex items-center gap-6 mt-12 bg-white/40 p-6 ${t.roundness} w-max backdrop-blur-sm border border-white/50 shadow-sm relative overflow-hidden">
                         <img src="${qrCode}" class="h-20 mix-blend-multiply" alt="QR Code">
                         <div>
                             <p class="text-[8px] font-bold uppercase tracking-widest text-gray-400 mb-2" style="${fontSans}">Scan & Buy</p>
@@ -264,7 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         } else {
             sectionHtml = `
-            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center justify-end py-20 ${t.bgColor}">
+            <section class="catalog-section pr-[300px] min-h-[90vh] flex items-center justify-end py-20 ${t.bgColor} relative overflow-hidden">
+                <div class="absolute inset-0 pointer-events-none" style="${t.pattern}"></div>
+                ${t.decoration}
                 <div class="absolute -left-20 top-1/2 -translate-y-1/2 w-[700px] z-10 pointer-events-none">
                     <img src="${prod.transparentImg}" class="w-full ${t.shadow} ${t.roundness} animate-in-view mix-blend-multiply">
                 </div>
@@ -284,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         "${prod.desc}"
                     </p>
 
-                    <div class="flex items-end gap-8 bg-black/5 p-8 ${t.roundness} w-max">
+                    <div class="flex items-end gap-8 bg-black/5 p-8 ${t.roundness} w-max relative overflow-hidden">
                         <div class="text-center">
                             <img src="${qrCode}" class="h-20 mix-blend-multiply mb-3" alt="QR Code">
                             <p class="text-[9px] uppercase tracking-widest font-bold text-gray-500" style="${fontSans}">Scan Me</p>
