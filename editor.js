@@ -201,6 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = function(f) {
             fabric.Image.fromURL(f.target.result, function(img) {
+                if (!img) {
+                    alert("Зураг уншихад алдаа гарлаа.");
+                    return;
+                }
                 // Scale down if too large
                 if(img.width > canvas.width) {
                     img.scaleToWidth(canvas.width - 100);
@@ -420,19 +424,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // -----------------------------------------------------
     const productModal = document.getElementById('product-modal');
     const mockProducts = [
-        { id: 'p1', name: 'Premium Puffer Jacket', price: '89,900₮', img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400' },
-        { id: 'p2', name: 'Classic White Tee', price: '29,900₮', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400' },
-        { id: 'p3', name: 'Black Hoodie', price: '129,900₮', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400' },
-        { id: 'p4', name: 'Training Pants', price: '49,900₮', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400' },
-        { id: 'p5', name: 'New Season Bag', price: '150,000₮', img: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400' }
+        { id: '864209', name: 'Lumber Chair', price: '$90', img: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400'},
+        { id: '394811', name: 'Floating Table', price: '$400', img: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400'},
+        { id: '502394', name: 'Elke Stool', price: '$150', img: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=400'},
+        { id: '719330', name: 'Sandwich TV Set', price: '$400', img: 'https://images.unsplash.com/photo-1601366533287-5ee2ce46ece5?w=400'},
+        { id: '129845', name: 'Hemper Sofa', price: '$1200', img: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'}
     ];
 
-    document.getElementById('open-products-btn').addEventListener('click', () => {
+    function renderProductCards() {
         const listContainer = document.getElementById('mock-product-list');
         listContainer.innerHTML = mockProducts.map(p => `
             <div class="product-picker-card bg-white p-3 rounded-2xl shadow-sm border border-slate-100 cursor-pointer hover:shadow-md hover:border-violet-300 transition group" data-id="${p.id}">
-                <div class="h-32 mb-3 rounded-xl overflow-hidden relative">
-                    <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                <div class="h-32 mb-3 rounded-xl overflow-hidden relative bg-slate-50 flex items-center justify-center p-2">
+                    <img src="${p.img}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
                         <span class="text-white font-bold text-[10px] bg-violet-600 px-3 py-1 rounded-full uppercase tracking-widest"><i class="fa-solid fa-plus"></i> Оруулах</span>
                     </div>
@@ -441,7 +445,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-[11px] font-bold text-pink-500 mt-1">${p.price}</p>
             </div>
         `).join('');
-        productModal.classList.remove('hidden');
 
         // Add events
         document.querySelectorAll('.product-picker-card').forEach(card => {
@@ -453,11 +456,191 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelector('.tool-btn[data-tool="select"]').click();
             });
         });
+    }
+
+    document.getElementById('open-products-btn').addEventListener('click', () => {
+        renderProductCards();
+        productModal.classList.remove('hidden');
     });
 
     document.getElementById('close-product-modal').addEventListener('click', () => {
         productModal.classList.add('hidden');
     });
+
+    // -----------------------------------------------------
+    // EXCEL IMPORT СИСТЕМ (Excel Import)
+    // -----------------------------------------------------
+    let excelData = [];
+    const excelModal = document.getElementById('excel-modal');
+    const excelModalCard = document.getElementById('excel-modal-card');
+    const excelFileInput = document.getElementById('excel-file-input');
+    const excelDropZone = document.getElementById('excel-drop-zone');
+    const excelPreview = document.getElementById('excel-preview');
+    const excelPreviewTable = document.getElementById('excel-preview-table');
+    const importExcelConfirmBtn = document.getElementById('import-excel-btn-confirm');
+
+    const openExcelBtn = document.getElementById('import-excel-btn');
+    if (openExcelBtn) {
+        openExcelBtn.addEventListener('click', () => {
+            excelModal.classList.remove('hidden');
+            setTimeout(() => {
+                excelModal.classList.remove('opacity-0');
+                if(excelModalCard) excelModalCard.classList.remove('scale-95');
+            }, 10);
+        });
+    }
+
+    document.getElementById('close-excel-modal-btn').addEventListener('click', () => {
+        excelModal.classList.add('opacity-0');
+        if(excelModalCard) excelModalCard.classList.add('scale-95');
+        setTimeout(() => excelModal.classList.add('hidden'), 300);
+        excelPreview.classList.add('hidden');
+        excelData = [];
+        importExcelConfirmBtn.disabled = true;
+    });
+
+    if (excelDropZone) {
+        excelDropZone.addEventListener('click', () => excelFileInput.click());
+
+        excelFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processExcelFile(file);
+        });
+
+        excelDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            excelDropZone.style.borderColor = '#3b82f6';
+            excelDropZone.style.backgroundColor = '#eff6ff';
+        });
+
+        excelDropZone.addEventListener('dragleave', () => {
+            excelDropZone.style.borderColor = '#d1d5db';
+            excelDropZone.style.backgroundColor = 'transparent';
+        });
+
+        excelDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            excelDropZone.style.borderColor = '#d1d5db';
+            excelDropZone.style.backgroundColor = 'transparent';
+            const file = e.dataTransfer.files[0];
+            if (file) processExcelFile(file);
+        });
+    }
+
+    function processExcelFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                if (jsonData.length === 0) {
+                    alert('Excel файл хоосон байна!');
+                    return;
+                }
+
+                const requiredColumns = ['Нэр', 'Үнэ'];
+                const headers = Object.keys(jsonData[0]);
+                const hasRequiredColumns = requiredColumns.every(col => 
+                    headers.some(h => h.toLowerCase().includes(col.toLowerCase()))
+                );
+
+                if (!hasRequiredColumns) {
+                    alert(`Excel файлд дараах баганууд байх ёстой:\n${requiredColumns.join(', ')}`);
+                    return;
+                }
+
+                excelData = jsonData.map(row => {
+                    const normalized = {};
+                    Object.keys(row).forEach(key => {
+                        const lowerKey = key.toLowerCase().trim();
+                        if (lowerKey.includes('нэр')) normalized.name = row[key];
+                        else if (lowerKey.includes('үнэ')) normalized.price = row[key];
+                        else if (lowerKey.includes('зураг')) normalized.imageUrl = row[key];
+                    });
+                    return normalized;
+                });
+
+                displayExcelPreview();
+                importExcelConfirmBtn.disabled = false;
+            } catch (error) {
+                alert('Excel файлыг уншихад алдаа гарлаа: ' + error.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function displayExcelPreview() {
+        excelPreview.classList.remove('hidden');
+        const thead = excelPreviewTable.querySelector('thead');
+        const tbody = excelPreviewTable.querySelector('tbody');
+
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (excelData.length === 0) return;
+
+        const headerRow = document.createElement('tr');
+        ['Нэр', 'Үнэ'].forEach(col => {
+            const th = document.createElement('th');
+            th.className = 'px-4 py-2 text-left font-bold text-gray-700 bg-gray-100 border-b';
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        excelData.slice(0, 5).forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-4 py-2 border-b">${row.name || '-'}</td>
+                <td class="px-4 py-2 border-b">${row.price || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (excelData.length > 5) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="2" class="px-4 py-2 text-center text-gray-500 text-sm">+ ${excelData.length - 5} бусад мөр</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    if (importExcelConfirmBtn) {
+        importExcelConfirmBtn.addEventListener('click', () => {
+            if (excelData.length === 0) return;
+
+            const importedProducts = excelData.map((row, index) => ({
+                id: `excel-${Date.now()}-${index}`,
+                name: row.name || 'Нэргүй',
+                price: row.price || '$0',
+                img: row.imageUrl || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400'
+            }));
+
+            mockProducts.push(...importedProducts);
+            
+            // Optionally auto-place all imported products immediately
+            importedProducts.forEach(prod => {
+                insertProductCard(prod);
+            });
+
+            alert(`${importedProducts.length} бараа амжилттай импортлогдож хуудсанд байршлаа!`);
+            document.getElementById('close-excel-modal-btn').click();
+        });
+    }
+
+    window.downloadSampleExcel = function() {
+        const sampleData = [
+            { 'Нэр': 'Сайн ширээ', 'Үнэ': '$250', 'Зураг': 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=400' },
+            { 'Нэр': 'Эргүүлэх сандал', 'Үнэ': '$180', 'Зураг': 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400' }
+        ];
+        const worksheet = XLSX.utils.json_to_sheet(sampleData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Бараа');
+        worksheet['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 40 }];
+        XLSX.writeFile(workbook, 'baraa_template.xlsx');
+    };
 
     let placedProductsCount = 0;
 
@@ -518,6 +701,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         fabric.Image.fromURL(prod.img, function(img) {
+            if (!img) {
+                alert("Зураг уншихад алдаа гарлаа. (CORS хязгаарлалт эсвэл холбоос буруу)");
+                return;
+            }
+
             let cardWidth = 240;
             let imgHeight = 280;
 
@@ -582,7 +770,7 @@ document.addEventListener('DOMContentLoaded', () => {
             canvas.setActiveObject(sel);
 
             placedProductsCount++;
-        });
+        }, { crossOrigin: 'anonymous' });
     }
 
     // -----------------------------------------------------
