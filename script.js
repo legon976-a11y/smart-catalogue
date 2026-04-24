@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function getProductSlotHTML(prod, slotClass, isBig) {
-        if(!prod) return `<div class="product-slot ${slotClass} border-2 border-dashed border-gray-300 opacity-50 flex items-center justify-center text-gray-400 font-bold uppercase text-xs">Empty Slot</div>`;
+        if(!prod) return `<div class="product-slot ${slotClass} border-2 border-dashed border-gray-300 opacity-50 flex items-center justify-center text-gray-400 font-bold uppercase text-xs" contenteditable="true">Empty Slot</div>`;
         
         const t = currentTheme;
         const titleSize = isBig ? 'text-4xl' : 'text-lg';
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add Page Number
             const pageNum = document.createElement('div');
             pageNum.className = `absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest font-bold ${currentTheme.textColor}`;
-            pageNum.innerText = `Page ${Math.floor(i / cap) + 1}`;
+            pageNum.innerHTML = `<span contenteditable="true">Page ${Math.floor(i / cap) + 1}</span>`;
             pageEl.appendChild(pageNum);
 
             catalogContainer.appendChild(pageEl);
@@ -630,15 +630,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', function() {
-            const categoryText = this.querySelector('span').textContent.trim();
+            const action = this.getAttribute('data-action');
             
-            if (categoryText === 'Cart') {
+            if (action === 'cart') {
                 openCart();
-            } else if (categoryText === 'Contact') {
+            } else if (action === 'contact') {
                 openContact();
+            } else if (action === 'home') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (action === 'shop') {
+                document.getElementById('catalog-sections').scrollIntoView({ behavior: 'smooth' });
             } else {
-                // It's a product category (Tables, Chairs, TV Sets, Sofas)
-                filterProductsByCategory(categoryText);
+                alert('Энэ цэс одоогоор хөгжүүлэгдэж байна.');
             }
         });
 
