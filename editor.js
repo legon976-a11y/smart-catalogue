@@ -459,11 +459,75 @@ document.addEventListener('DOMContentLoaded', () => {
         productModal.classList.add('hidden');
     });
 
+    let placedProductsCount = 0;
+
+    function getNextSlotCoords(layoutType) {
+        const padding = 60;
+        let x = 0;
+        let y = 0;
+        let expectedBottomY = 0;
+
+        if (layoutType === 'grid2') {
+            const cols = 2;
+            const colWidth = (canvas.width - padding * 3) / 2;
+            const rowHeight = 380;
+            const col = placedProductsCount % cols;
+            const row = Math.floor(placedProductsCount / cols);
+            
+            x = padding + col * (colWidth + padding) + colWidth / 2;
+            y = padding + row * (rowHeight + padding) + rowHeight / 2;
+            expectedBottomY = y + rowHeight / 2 + padding;
+
+        } else if (layoutType === 'grid3') {
+            const cols = 3;
+            const colWidth = (canvas.width - padding * 4) / 3;
+            const rowHeight = 320;
+            const col = placedProductsCount % cols;
+            const row = Math.floor(placedProductsCount / cols);
+            
+            x = padding + col * (colWidth + padding) + colWidth / 2;
+            y = padding + row * (rowHeight + padding) + rowHeight / 2;
+            expectedBottomY = y + rowHeight / 2 + padding;
+
+        } else if (layoutType === 'list') {
+            const rowHeight = 280;
+            x = canvas.width / 2;
+            y = padding + placedProductsCount * (rowHeight + padding) + rowHeight / 2;
+            expectedBottomY = y + rowHeight / 2 + padding;
+        } else {
+            // Default center
+            x = canvas.width / 2;
+            y = canvas.height / 2;
+            expectedBottomY = canvas.height;
+        }
+
+        return { x, y, expectedBottomY };
+    }
+
     function insertProductCard(prod) {
-        // Create an elegant product card layout dynamically using Fabric.Group
+        const layoutSelect = document.getElementById('doc-layout');
+        const layoutType = layoutSelect ? layoutSelect.value : 'grid2';
+        const coords = getNextSlotCoords(layoutType);
+
+        // Smart Paper Resize
+        if (coords.expectedBottomY > canvas.height) {
+            canvas.setHeight(coords.expectedBottomY);
+            // Zoom visual scaling needs reset/re-apply
+            applyZoom();
+            if(history.length === 0) saveHistory();
+        }
+
         fabric.Image.fromURL(prod.img, function(img) {
-            const cardWidth = 240;
-            const imgHeight = 280;
+            let cardWidth = 240;
+            let imgHeight = 280;
+
+            if (layoutType === 'grid3') {
+                cardWidth = 180;
+                imgHeight = 210;
+            } else if (layoutType === 'list') {
+                cardWidth = 320;
+                imgHeight = 200;
+            }
 
             // Image clipping for rounded corners
             const clipPath = new fabric.Rect({
@@ -475,6 +539,8 @@ document.addEventListener('DOMContentLoaded', () => {
             img.set({
                 scaleX: scale,
                 scaleY: scale,
+                left: coords.x,
+                top: coords.y - 30, // Offset a bit for text
                 originX: 'center',
                 originY: 'center',
                 clipPath: clipPath
@@ -483,10 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Name
             const nameText = new fabric.IText(prod.name.toUpperCase(), {
                 fontFamily: 'Inter',
-                fontSize: 14,
+                fontSize: layoutType === 'grid3' ? 12 : 14,
                 fontWeight: 'bold',
                 fill: '#2f3640',
-                top: imgHeight / 2 + 20,
+                left: coords.x,
+                top: img.top + imgHeight / 2 + 20,
                 originX: 'center',
                 originY: 'top',
                 textAlign: 'center'
@@ -495,24 +562,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Price
             const priceText = new fabric.IText(prod.price, {
                 fontFamily: 'Inter',
-                fontSize: 16,
+                fontSize: layoutType === 'grid3' ? 14 : 16,
                 fontWeight: 'bold',
                 fill: '#ec4899', // Pink
-                top: imgHeight / 2 + 45,
+                left: coords.x,
+                top: nameText.top + 25,
                 originX: 'center',
                 originY: 'top',
                 textAlign: 'center'
             });
 
-            const group = new fabric.Group([img, nameText, priceText], {
-                left: canvas.width / 2,
-                top: canvas.height / 2,
-                originX: 'center',
-                originY: 'center'
+            // Add as individual objects for independent editing
+            canvas.add(img, nameText, priceText);
+            
+            // Create an active selection so user can move them together initially
+            const sel = new fabric.ActiveSelection([img, nameText, priceText], {
+                canvas: canvas
             });
+            canvas.setActiveObject(sel);
 
-            canvas.add(group);
-            canvas.setActiveObject(group);
+            placedProductsCount++;
         });
     }
 
