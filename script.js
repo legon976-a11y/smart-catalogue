@@ -192,25 +192,51 @@ document.addEventListener('DOMContentLoaded', () => {
     let layoutIndex = 0;
     
     document.getElementById('add-product-btn').addEventListener('click', () => {
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            modalInner.classList.remove('scale-95');
-        }, 10);
+        try {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                if (modal) {
+                    modal.classList.remove('opacity-0');
+                    if (modalInner) modalInner.classList.remove('scale-95');
+                }
+            }, 10);
+        } catch (e) {
+            console.error('Error opening product modal:', e);
+        }
     });
 
     document.getElementById('close-modal-btn').addEventListener('click', () => {
-        modal.classList.add('opacity-0');
-        modalInner.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 300);
+        try {
+            if (modal) {
+                modal.classList.add('opacity-0');
+                if (modalInner) modalInner.classList.add('scale-95');
+                setTimeout(() => {
+                    if (modal) modal.classList.add('hidden');
+                }, 300);
+            }
+        } catch (e) {
+            console.error('Error closing product modal:', e);
+        }
     });
 
     function getQRCodeUrl(text) {
-        return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(text)}&color=000000&bgcolor=ffffff00`;
+        if (!text) return '';
+        try {
+            return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(String(text))}&color=000000&bgcolor=ffffff00`;
+        } catch (e) {
+            console.warn('QR Code generation error:', e);
+            return '';
+        }
     }
 
     function getBarcodeUrl(text) {
-        return `https://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(text)}&scale=2&height=10&includetext=true`;
+        if (!text) return '';
+        try {
+            return `https://bwipjs-api.metafloor.com/?bcid=code128&text=${encodeURIComponent(String(text))}&scale=2&height=10&includetext=true`;
+        } catch (e) {
+            console.warn('Barcode generation error:', e);
+            return '';
+        }
     }
 
     // ===== PAPER SIZE & LAYOUT SELECTOR =====
@@ -338,83 +364,102 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Swapping image on click
     window.swapImage = function(imgEl, prodId) {
+        if (!imgEl || !prodId) return;
         const newUrl = prompt('Шинэ зургийн URL холбоосыг оруулна уу:');
-        if(newUrl) {
-            imgEl.src = newUrl;
-            // Update in data
-            const p = placedProducts.find(x => x.id === prodId);
-            if(p) p.transparentImg = newUrl;
+        if (newUrl && newUrl.trim()) {
+            try {
+                // Validate URL format
+                new URL(newUrl);
+                const img = new Image();
+                img.onerror = function() {
+                    alert('Зургийн холбоос буруу байна. Дахин оруулна уу.');
+                };
+                img.onload = function() {
+                    imgEl.src = newUrl;
+                    // Update in data
+                    const p = placedProducts.find(x => x.id === prodId);
+                    if (p) p.transparentImg = newUrl;
+                };
+                img.src = newUrl;
+            } catch (e) {
+                alert('Буруу URL формат байна.');
+            }
         }
     };
 
     function renderCatalogPages() {
-        if(placedProducts.length === 0) return;
-        emptyState?.remove();
-        catalogContainer.innerHTML = '';
+        try {
+            if (placedProducts.length === 0) return;
+            if (emptyState) emptyState.remove();
+            catalogContainer.innerHTML = '';
 
-        const capacityMap = {
-            'hero-grid': 5,
-            'magazine-left': 4,
-            'bento-box': 4,
-            'classic-3x3': 9,
-            'feature-row': 3
-        };
-        const cap = capacityMap[selectedLayoutType] || 5;
+            const capacityMap = {
+                'hero-grid': 5,
+                'magazine-left': 4,
+                'bento-box': 4,
+                'classic-3x3': 9,
+                'feature-row': 3
+            };
+            const cap = capacityMap[selectedLayoutType] || 5;
 
-        for(let i = 0; i < placedProducts.length; i += cap) {
-            const pageItems = placedProducts.slice(i, i + cap);
-            const pageEl = document.createElement('div');
-            pageEl.className = `catalog-page ${currentTheme.bgColor}`;
-            pageEl.style.width = currentPaperWidth;
-            pageEl.style.height = currentPaperHeight;
+            for (let i = 0; i < placedProducts.length; i += cap) {
+                const pageItems = placedProducts.slice(i, i + cap);
+                const pageEl = document.createElement('div');
+                pageEl.className = `catalog-page ${currentTheme.bgColor}`;
+                pageEl.style.width = currentPaperWidth;
+                pageEl.style.height = currentPaperHeight;
 
-            // Add Theme Pattern
-            const patternEl = document.createElement('div');
-            patternEl.className = 'absolute inset-0 pointer-events-none';
-            patternEl.style = currentTheme.pattern;
-            pageEl.appendChild(patternEl);
-            pageEl.insertAdjacentHTML('beforeend', currentTheme.decoration);
+                // Add Theme Pattern
+                const patternEl = document.createElement('div');
+                patternEl.className = 'absolute inset-0 pointer-events-none';
+                patternEl.style = currentTheme.pattern || '';
+                pageEl.appendChild(patternEl);
+                pageEl.insertAdjacentHTML('beforeend', currentTheme.decoration || '');
 
-            const gridContainer = document.createElement('div');
-            gridContainer.className = `strict-grid layout-${selectedLayoutType} relative z-10`;
+                const gridContainer = document.createElement('div');
+                gridContainer.className = `strict-grid layout-${selectedLayoutType} relative z-10`;
 
-            let innerHtml = '';
+                let innerHtml = '';
 
-            if (selectedLayoutType === 'hero-grid') {
-                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
-                innerHtml += `<div class="sub-grid">`;
-                for(let j=1; j<5; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
-                innerHtml += `</div>`;
-            } 
-            else if (selectedLayoutType === 'magazine-left') {
-                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
-                innerHtml += `<div class="sub-grid">`;
-                for(let j=1; j<4; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
-                innerHtml += `</div>`;
+                if (selectedLayoutType === 'hero-grid') {
+                    innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                    innerHtml += `<div class="sub-grid">`;
+                    for (let j = 1; j < 5; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                    innerHtml += `</div>`;
+                }
+                else if (selectedLayoutType === 'magazine-left') {
+                    innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                    innerHtml += `<div class="sub-grid">`;
+                    for (let j = 1; j < 4; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                    innerHtml += `</div>`;
+                }
+                else if (selectedLayoutType === 'bento-box') {
+                    innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
+                    innerHtml += getProductSlotHTML(pageItems[1], 'slot-med-1', false);
+                    innerHtml += getProductSlotHTML(pageItems[2], 'slot-med-2', false);
+                    innerHtml += getProductSlotHTML(pageItems[3], 'slot-long', false);
+                }
+                else if (selectedLayoutType === 'classic-3x3') {
+                    for (let j = 0; j < 9; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                }
+                else if (selectedLayoutType === 'feature-row') {
+                    for (let j = 0; j < 3; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
+                }
+
+                gridContainer.innerHTML = innerHtml;
+                pageEl.appendChild(gridContainer);
+
+                // Add Page Number
+                const pageNum = document.createElement('div');
+                pageNum.className = `absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest font-bold ${currentTheme.textColor}`;
+                pageNum.innerHTML = `<span contenteditable="true">Page ${Math.floor(i / cap) + 1}</span>`;
+                pageEl.appendChild(pageNum);
+
+                catalogContainer.appendChild(pageEl);
             }
-            else if (selectedLayoutType === 'bento-box') {
-                innerHtml += getProductSlotHTML(pageItems[0], 'slot-big', true);
-                innerHtml += getProductSlotHTML(pageItems[1], 'slot-med-1', false);
-                innerHtml += getProductSlotHTML(pageItems[2], 'slot-med-2', false);
-                innerHtml += getProductSlotHTML(pageItems[3], 'slot-long', false);
-            }
-            else if (selectedLayoutType === 'classic-3x3') {
-                for(let j=0; j<9; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
-            }
-            else if (selectedLayoutType === 'feature-row') {
-                for(let j=0; j<3; j++) innerHtml += getProductSlotHTML(pageItems[j], '', false);
-            }
-
-            gridContainer.innerHTML = innerHtml;
-            pageEl.appendChild(gridContainer);
-
-            // Add Page Number
-            const pageNum = document.createElement('div');
-            pageNum.className = `absolute bottom-4 left-0 right-0 text-center text-[10px] uppercase tracking-widest font-bold ${currentTheme.textColor}`;
-            pageNum.innerHTML = `<span contenteditable="true">Page ${Math.floor(i / cap) + 1}</span>`;
-            pageEl.appendChild(pageNum);
-
-            catalogContainer.appendChild(pageEl);
+        } catch (e) {
+            console.error('Error rendering catalog pages:', e);
+            alert('Каталог үүсгэхэд алдаа гарлаа.');
         }
     }
 
@@ -448,10 +493,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addToCart(product) {
-        cartItems.push(product);
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        updateCartBadge();
-        alert(`${product.name} has been added to cart!`);
+        try {
+            if (!product || !product.id) {
+                alert('Бараа олдсонгүй');
+                return;
+            }
+            cartItems.push(product);
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            updateCartBadge();
+            alert(`${product.name || 'Бараа'} сагсанд нэмэгдлээ!`);
+        } catch (e) {
+            console.error('Error adding to cart:', e);
+            alert('Сагсанд нэмэхэд алдаа гарлаа.');
+        }
     }
 
     function openCart() {

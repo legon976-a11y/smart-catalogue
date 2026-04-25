@@ -1,22 +1,59 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // -----------------------------------------------------
+    // Check if fabric.js is loaded
+    if (typeof fabric === 'undefined') {
+        console.error('Fabric.js library not loaded');
+        return;
+    }
+
+    // Check if canvas element exists
+    const canvasElement = document.getElementById('main-canvas');
+    if (!canvasElement) {
+        console.error('Canvas element not found');
+        return;
+    }
+
+    // Global error handler for this script
+    try {
+        // All the main code here
+    } catch (error) {
+        console.error('Error in editor initialization:', error);
+        return;
+    }
+
+    // Main editor code
+    // ----------------------------------------------------- 
     // 1. ИНИЦАЛИЗАЦИ (Initialization)
-    // -----------------------------------------------------
+    // ----------------------------------------------------- 
     const canvas = new fabric.Canvas('main-canvas', {
-        preserveObjectStacking: true, // Always keep selected object on top while moving
+        preserveObjectStacking: true,
         selectionColor: 'rgba(107, 33, 168, 0.1)',
         selectionBorderColor: '#6b21a8',
         selectionLineWidth: 1
     });
 
-    // Handle responsive sizing visually via zoom
-    const canvasWrapper = document.getElementById('canvas-wrapper');
-    let currentZoom = 1;
+        // Handle responsive sizing visually via zoom
+        const canvasWrapper = document.getElementById('canvas-wrapper');
+        if (!canvasWrapper) {
+            console.error('Canvas wrapper not found');
+            return;
+        }
 
-    // Undo/Redo logic simple implementation
-    let history = [];
-    let historyIndex = -1;
-    let isHistoryAction = false;
+        let currentZoom = 1;
+
+        // Handle responsive canvas sizing for mobile
+        function handleCanvasResize() {
+            const containerWidth = document.getElementById('canvas-container-wrapper')?.clientWidth || 800;
+            if (window.innerWidth < 768) {
+                // Mobile: scale canvas to fit
+                const maxWidth = Math.min(containerWidth - 16, 600);
+                const aspectRatio = 794 / 1123;
+                canvasWrapper.style.width = maxWidth + 'px';
+                canvasWrapper.style.height = (maxWidth / aspectRatio) + 'px';
+            }
+        }
+
+        window.addEventListener('resize', handleCanvasResize);
+        handleCanvasResize();
 
     function saveHistory() {
         if (isHistoryAction) return;
